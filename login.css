@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+body {
+    background-color: rgb(8, 14, 17);
+    /* background-color: #2d2b2b; */
+}
+
+.container {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.decorDarkBlue {
+    background-color: #1a4eaf;
+    border-radius: 50%;
+    position: absolute;
+    top: -60vw;
+    left: -20vw;
+    height: 50vh;
+    width: 125vw;
+    opacity: 50%;
+}
+
+.decorLightBlue {
+    background-color: #729db9;
+    border-radius: 50%;
+    opacity: 50%;
+    position: absolute;
+    right: -13vh;
+    top: -10vh; 
+    height: 33vh;
+    width:  33vh;
+}
+
+.loginTitle {
+    
+}
