@@ -58,6 +58,80 @@
         </div>
       </div>
     </section>
+
+    <div class="accordion">
+    <div class="accordion-item">
+        <input type="radio" id="section1" name="accordion" />
+        <label for="section1" class="accordion-header">
+        <label class="accordion-title">Section 1</label>
+        <div class="accordion-icon">
+            <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            height="16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+            <path
+                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
+                fill="currentColor"
+            ></path>
+            </svg>
+        </div>
+        </label>
+        <div class="content">
+        <p>This is the content for Section 1.</p>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <input checked="" type="radio" id="section2" name="accordion" />
+        <label for="section2" class="accordion-header">
+        <label class="accordion-title">Section 2</label>
+        <div class="accordion-icon">
+            <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            height="16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+            <path
+                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
+                fill="currentColor"
+            ></path>
+            </svg>
+        </div>
+        </label>
+        <div class="content">
+        <p>This is the content for Section 2.</p>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <input type="radio" id="section3" name="accordion" />
+        <label for="section3" class="accordion-header">
+        <label class="accordion-title">Section 3</label>
+        <div class="accordion-icon">
+            <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            height="16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+            <path
+                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
+                fill="currentColor"
+            ></path>
+            </svg>
+        </div>
+        </label>
+        <div class="content">
+        <p>This is the content for Section 3.</p>
+        </div>
+    </div>
+    </div>
+
   
     <footer class="footer">
       Made with ❤️ by Om Thanage
