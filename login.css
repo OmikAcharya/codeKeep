@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     color: white;
+    overflow-x: hidden;
 }
 
 body {
@@ -9,19 +10,15 @@ body {
     /* background-color: #2d2b2b; */
 }
 
-.container {
-    display: flex;
-    flex-flow: column wrap;
-}
 
 .decorDarkBlue {
     background-color: #1a4eaf;
     border-radius: 50%;
     position: absolute;
-    top: -60vw;
-    left: -20vw;
-    height: 50vh;
-    width: 125vw;
+    top: -13vw;
+    right: 0;
+    height: 25vw;
+    width: 25vw;
     opacity: 50%;
 }
 
@@ -36,6 +33,126 @@ body {
     width:  33vh;
 }
 
-.loginTitle {
-    
+img{
+    width: 75vw;
+    height: 100vh;
 }
+
+.container{
+    display: flex;
+}
+
+.login{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25vw;
+}
+
+.login .box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-form {
+    position: relative;
+    margin: 12px 0;
+    width: 100%;
+  }
+  
+  .input-form input {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 2px #fff solid;
+    display: block;
+    width: 100%;
+    padding: 15px 0;
+    font-size: 18px;
+    color: #fff;
+  }
+  
+  .input-form input:focus,
+  .input-form input:valid {
+    outline: 0;
+    border-bottom-color: lightblue;
+  }
+  
+  .input-form label {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    pointer-events: none;
+  }
+  
+  .input-form label span {
+    display: inline-block;
+    font-size: 18px;
+    min-width: 5px;
+    color: #fff;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .input-form input:focus+label span,
+  .input-form input:valid+label span {
+    color: lightblue;
+    transform: translateY(-30px);
+  }
+
+.button {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    padding-block: 0.5rem;
+    padding-inline: 1.25rem;
+    background-color: rgb(0 107 179);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffff;
+    gap: 10px;
+    font-weight: bold;
+    border: 3px solid #ffffff4d;
+    outline: none;
+    font-size: 15px;
+  }
+  
+  
+  
+  .button:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  .button::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -100px;
+    opacity: 0.6;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -100px;
+    }
+  
+    60% {
+      left: 100%;
+    }
+  
+    to {
+      left: 100%;
+    }
+  }
+  
