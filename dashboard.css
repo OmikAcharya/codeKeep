@@ -1,126 +1,142 @@
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-
+    background-color: #1e1e1e ;
+    color: #d4d4d4 ;
 }
 
 .main {
-
-    display: flex;
-
-
-}
-.items{
-        margin: 25px;
-}
-.profile {
-    background-color: black;
-    height: 100px;
-    width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    border-radius: 50%;
-}
-ul {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 150px;
-    padding: 10px;
-    text-decoration: none;
-    list-style: none;
-    text-align: center;
-    color: white;
-    font-weight: bold;
+    display: flex ;
+    min-height: 100vh ;
 }
 
+/* Navbar styles */
 .navbar {
-    background-color: #2D2B2B;
-    display: flex;
-    flex-direction: column;
-    width: 123mm;
-    justify-content: space-around;
+    width: 250px ;
+    background-color: #252526 ;
+    padding: 20px ;
+    display: flex ;
+    flex-direction: column ;
+    align-items: center ;
 }
 
+.navbar img {
+    width: 120px ;
+    height: 120px ;
+    border-radius: 50% ;
+    margin-bottom: 20px ;
+    border: 2px solid #0078d4 ;
+}
+
+.items ul {
+    list-style-type: none;
+}
+
+.items ul li {
+    padding: 10px 0 ;
+    cursor: pointer ;
+    transition: color 0.3s ease ;
+}
+
+.items ul li:hover, .items ul li a:hover {
+    color: #0078d4 ;
+}
+
+.items ul li a {
+    color: inherit ;
+    text-decoration: none ;
+}
+
+/* Container styles */
 .container {
-    background-color: #696969;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    padding: 15px;
-
+    flex: 1 ;
+    padding: 20px ;
+    display: flex ;
+    flex-direction: column ;
 }
 
+/* Hello card styles */
 .helloCard {
-    text-align: left;
-    color: white;
-    margin: 20px;
-    background-image: linear-gradient(to right, #004D80, #6A9CBD);
-    border-radius: 20px;
-    height: 320px;
-    padding: 20px 25px;
+    background-color: #2d2d30 ;
+    padding: 30px ;
+    border-radius: 8px ;
+    margin-bottom: 20px ;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) ;
 }
 
+.helloCard h1 {
+    color: #0078d4 ;
+    margin: 0 ;
+}
+
+.calender ul{
+    list-style: none;
+}
+
+/* Box styles */
 .box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 5px;
+    display: flex ;
+    gap: 20px ;
+    flex: 1 ;
+}
+
+.cards {
+    flex: 2 ;
+    display: flex ;
+    flex-direction: column ;
+    gap: 20px ;
+}
+
+.graph, .problem, .notes, .calendar {
+    background-color: #2d2d30 ;
+    padding: 20px ;
+    border-radius: 8px ;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) ;
 }
 
 .graph {
-    background-color: aliceblue;
-    border-radius: 20px;
-    margin: 0px 20px;
-    height: 200px;
-    width: 788px;
-    padding: 25px;
-    text-align: center;
-
-
-}
-
-.problem {
-    background-color: aliceblue;
-    border-radius: 20px;
-    margin: 15px 20px;
-    height: 200px;
-    width: 384px;
-    padding: 25px;
-    text-align: center;
-}
-
-.notes {
-    background-color: aliceblue;
-    border-radius: 20px;
-    margin: 15px 0px;
-    height: 200px;
-    width: 384px;
-    padding: 25px;
-    text-align: center;
+    flex: 2 ;
 }
 
 .tp {
-    display: flex;
+    display: flex ;
+    gap: 20px ;
+    flex: 1 ;
+}
+
+.problem, .notes {
+    flex: 1 ;
 }
 
 .calendar {
-    background-color: aliceblue;
-    border-radius: 20px;
-    margin-left: 5px;
-  
-    height: 412.75px;
-    width: 384px;
-    padding: 25px;
-    text-align: center;
-    margin-right: 15px;
+    flex: 1 ;
 }
 
+/* Typography */
+h1 {
+    font-size: 24px ;
+    margin-bottom: 15px ;
+    color: #0078d4 ;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 10px ;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e ;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3e3e42 ;
+    border-radius: 5px ;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0078d4 ;
+}
