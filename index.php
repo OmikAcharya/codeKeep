@@ -133,9 +133,6 @@
     </div>
 
   
-    <footer class="footer">
-      Made with ❤️ by Om Thanage
-    </footer>
     <script src="index.js"></script>
 </body>
 </html>
