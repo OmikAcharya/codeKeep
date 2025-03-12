@@ -7,6 +7,8 @@ if (!isset($_SESSION['name'])) {
     exit;
 }
 
+if(isset($_SESSION['name']) )
+
 $name = $_SESSION['name'];
 
 $codechef_url = 'https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=asc&offset=0&mode=all';
@@ -67,7 +69,7 @@ usort($merged_future_contests, function ($a, $b) {
             <div class="items">
                 <ul>
                     <li><?php echo htmlspecialchars($name); ?></li>
-                    <li>CodeChef</li>
+                    <li>CodeChef :<input type="text" name="codechef_id" /></li>
                     <li>Leetcode</li>
                     <li>CodeForces</li>
                     <li><a href="#" onclick="confirmLogout()">Logout</a></li>

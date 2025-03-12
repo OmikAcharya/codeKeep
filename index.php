@@ -12,7 +12,7 @@
             <h1>codeKeep</h1>
             <li><a href="#home">Home</a></li>
             <li><a href="#features">Features</a></li>
-            <li><a href="#contact">Faqs</a></li>
+            <li><a href="#faq">Faqs</a></li>
         </ul>
         <ul class="nav-buttons">
             <li><a href="login.php">Login</a></li>

@@ -87,6 +87,7 @@ main{
     border-end-start-radius: 24px;
     font-size: 20px;
     cursor: pointer;
+    box-shadow: 0px 20px 10px #1a4eaf;
 }
 
 .stack-area {
