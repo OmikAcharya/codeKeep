@@ -72,6 +72,7 @@ usort($merged_future_contests, function ($a, $b) {
                     <li>CodeChef :<input type="text" name="codechef_id" /></li>
                     <li>Leetcode</li>
                     <li>CodeForces</li>
+                    <li><a href="./allusers.php">All Users</li>
                     <li><a href="#" onclick="confirmLogout()">Logout</a></li>
                 </ul>
             </div>

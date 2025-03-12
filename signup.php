@@ -4,7 +4,33 @@ require 'config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
-    $password = password_hash($_POST['password'] ?? '', PASSWORD_DEFAULT);
+    $password = $_POST['password'] ?? '';
+
+    if (empty($name) || empty($email) || empty($password)) {
+        echo "<script>
+                alert('All fields are required.');
+                window.location.href = 'signup.php';
+              </script>";
+        exit;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>
+                alert('Invalid email format.');
+                window.location.href = 'signup.php';
+              </script>";
+        exit;
+    }
+
+    if (strlen($password) < 6) {
+        echo "<script>
+                alert('Password must be at least 6 characters long.');
+                window.location.href = 'signup.php';
+              </script>";
+        exit;
+    }
+
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("SELECT email FROM USERS WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -18,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </script>";
         exit;
     } else {
-        // Insert
         $stmt = $conn->prepare("INSERT INTO USERS(name, email, password) VALUES(?,?,?)");
         $stmt->bind_param("sss", $name, $email, $password);
         $stmt->execute();
