@@ -7,9 +7,23 @@ if (!isset($_SESSION['name'])) {
     exit;
 }
 
-if(isset($_SESSION['name']) )
+if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
+    $name = $_SESSION['name'];
+    $email = $_SESSION['email'];
 
-$name = $_SESSION['name'];
+    $stmt = $conn->prepare("SELECT codechef_id, leetcode_id, codeforces_id FROM profile WHERE Uemail = ?");
+    
+    if ($stmt) {
+        $stmt->bind_param("s", $email);  // Bind the email as a string
+        $stmt->execute();
+        $stmt->bind_result($codechef_id, $leetcode_id, $codeforces_id);
+        $stmt->fetch();
+        $stmt->close();
+    } else {
+        die("Query preparation failed: " . $conn->error);
+    }
+}
+
 
 $codechef_url = 'https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=asc&offset=0&mode=all';
 $codeforces_url = 'https://codeforces.com/api/contest.list';
@@ -36,9 +50,6 @@ if ($codeforces_data && isset($codeforces_data['result'])) {
         }
     }
 }
-
-
-
 
 $merged_future_contests = array_merge($future_contests, $cf_future_contests);
 
@@ -69,10 +80,10 @@ usort($merged_future_contests, function ($a, $b) {
             <div class="items">
                 <ul>
                     <li><?php echo htmlspecialchars($name); ?></li>
-                    <li>CodeChef :<input type="text" name="codechef_id" /></li>
-                    <li>Leetcode</li>
-                    <li>CodeForces</li>
-                    <li><a href="./allusers.php">All Users</li>
+                    <li>CodeChef: <?php echo htmlspecialchars($codechef_id); ?></li>
+                    <li>Leetcode: <?php echo htmlspecialchars($leetcode_id); ?></li>
+                    <li>CodeForces: <?php echo htmlspecialchars($codeforces_id); ?></li>
+                    <li><a href="./allusers.php">All Users</a></li>
                     <li><a href="#" onclick="confirmLogout()">Logout</a></li>
                 </ul>
             </div>
@@ -97,7 +108,7 @@ usort($merged_future_contests, function ($a, $b) {
                 </div>
                 <div class="calendar">
                     <h1>Upcoming Contests</h1>
-                    <ul style="paddin>
+                    <ul style="padding: 0;">
                         <?php foreach ($merged_future_contests as $contest) { ?>
                             <li style="list-style: none">
                                 <strong><?php echo htmlspecialchars($contest['contest_name']); ?></strong> <br>

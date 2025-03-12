@@ -5,32 +5,16 @@ if (!isset($_SESSION['email'])) {
     die("Session error: User not logged in.");
 }
 
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $platforms = [
-        'codechef' => $_POST['codechef_id'] ?? '',
-        'codeforces' => $_POST['codeforces_id'] ?? '',
-        'leetcode' => $_POST['leetcode_id'] ?? ''
-    ];
+    $codechef_id = $_POST['codechef_id'] ?? '';
+    $codeforces_id = $_POST['codeforces_id'] ?? '';
+    $leetcode_id = $_POST['leetcode_id'] ?? '';
 
-    foreach ($platforms as $platform => $profileID) {
-        if (!empty($profileID)) {
-            echo $profileID;
-            echo $
-            $stmt = $conn->prepare("INSERT INTO profile (Uemail, platformId) VALUES (?, ?)");
-            
-            if (!$stmt) {
-                die("Prepare failed: " . $conn->error);
-            }
-
-            $stmt->bind_param("ss", $_SESSION['email'], $profileID);
-            
-            if (!$stmt->execute()) {
-                die("Execution failed: " . $stmt->error);
-            }
-
-            $stmt->close();
-        }
-    }
+    $stmt = $conn->prepare("INSERT INTO profile(Uemail, codechef_id, codeforces_id, leetcode_id) VALUES(?,?,?,?)");
+    $stmt->bind_param("ssss", $_SESSION['email'], $codechef_id, $codeforces_id, $leetcode_id);
+    $stmt->execute();
 
     echo "Data inserted successfully!";
     header("Location: dashboard.php");
