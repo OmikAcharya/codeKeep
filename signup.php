@@ -72,6 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="form-container">
+        <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;">
+            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
+            <h1><span style="text-align: left;">Create a account</span></h1>
+        </div>
+        <form>
         <h1>Create your account</h1>
         <form method="POST">
             <div class="form-row">
@@ -97,6 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="terms" class="checkbox-label">I accept the <a href="#">Terms and Conditions</a></label>
             </div>
             <button type="submit">Create an account</button>
+            <div style="display: flex; justify-content: center; margin-top: 10px; gap: 5px;">Already have an account?   <a href="./login.php">Login</a></div>
+
         </form>
     </div>
 </body>
