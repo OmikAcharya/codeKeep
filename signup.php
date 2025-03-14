@@ -68,23 +68,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-row">
                 <div class="form-group">
                     <label for="firstName">Enter Name</label>
-                    <input type="text" id="firstName" placeholder="Name">
+                    <input required type="text" id="firstName" placeholder="Name">
                 </div>
                 <div class="form-group">
                     <label for="lastName">Enter Email</label>
-                    <input type="text" id="lastName" placeholder="Email">
+                    <input required type="email" id="lastName" placeholder="Email">
                 </div>
             </div>
             <div class="form-group">
                 <label for="workEmail">Password</label>
-                <input type="email" id="workEmail" placeholder="Password">
+                <input required type="password" id="workEmail" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="workEmail">Confirm Password</label>
-                <input type="email" id="workEmail" placeholder="Re-enter Password">
+                <input required type="password" id="workEmail" placeholder="Re-enter Password">
             </div>
             <div class="checkbox-container">
-                <input type="checkbox" id="terms">
+                <input required type="checkbox" id="terms">
                 <label for="terms" class="checkbox-label">I accept the <a href="#">Terms and Conditions</a></label>
             </div>
             <button type="submit">Create an account</button>
