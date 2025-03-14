@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="form-container">
         <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;">
-            <h1>Code<span style="color: #1a4eaf">Keep</span></h1>
+            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
             <h1><span style="text-align: left;">Login</span></h1>
         </div>
         <form>
@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" style = "padding-bottom: 10px">Login</button>
         </form>
+        <div style="display: flex; justify-content: center; margin-top: 10px; gap: 5px;">New here?<a href="./signup.php">Sign Up</a></div>
     </div>
 </body>
 </html>
