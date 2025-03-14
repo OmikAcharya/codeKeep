@@ -1,4 +1,4 @@
-<?php
+<!-- <div?php
 require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-?>
+?> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,42 +59,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel = "stylesheet" href = "login.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Create Account Form</title>
 </head>
 <body>
-    <div class = "decorDarkBlue"></div>
-    <div class = "decorLightBlue"></div>
-    <form class = "container" action="signup.php" method="POST"> 
-        <img src="https://picsum.photos/1600/1200" alt="bg" />
-        <div class = "login">
-            <div class="box">
-                <h1>Code<span style = "color: #1a4eaf">Keep</span></h1>
-                <div class="input-form">
-                    <input type="text" name="name" required=true>
-                    <label style="color: white;">
-                        <span style="transition-delay:0ms">N</span><span style="transition-delay:50ms">a</span><span style="transition-delay:100ms">m</span><span style="transition-delay:150ms">e</span>
-                    </label>
+    <div class="form-container">
+        <h1>Create your account</h1>
+        <form>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Enter Name</label>
+                    <input type="text" id="firstName" placeholder="Name">
                 </div>
-                <div class="input-form">
-                    <input type="email" name="email" required=true>
-                    <label style="color: white;">
-                        <span style="transition-delay:0ms">E</span><span style="transition-delay:50ms">m</span><span style="transition-delay:100ms">a</span><span style="transition-delay:150ms">i</span><span style="transition-delay:200ms">l</span>
-                    </label></label>
+                <div class="form-group">
+                    <label for="lastName">Enter Email</label>
+                    <input type="text" id="lastName" placeholder="Email">
                 </div>
-                <div class="input-form">
-                    <input type="password" name="password" required=true>
-                    <label style="color: white;">
-                        <span style="transition-delay:0ms">P</span><span style="transition-delay:50ms">a</span><span style="transition-delay:100ms">s</span><span style="transition-delay:150ms">s</span><span style="transition-delay:200ms">w</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">r</span><span style="transition-delay:350ms">d</span>
-                    </label>
-                </div>
-                <button class="button">
-                    Signup
-                </button>
-                <p style="padding: 12px 0;">Already have an account?</p>
-                <p><a href="login.php" style="color: #1a4eaf; text-decoration: none; cursor: pointer;">Login</a></p>
-  
             </div>
-        </div>
-    </form>
+            <div class="form-group">
+                <label for="workEmail">Password</label>
+                <input type="email" id="workEmail" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="workEmail">Confirm Password</label>
+                <input type="email" id="workEmail" placeholder="Re-enter Password">
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="terms">
+                <label for="terms" class="checkbox-label">I accept the <a href="#">Terms and Conditions</a></label>
+            </div>
+            <button type="submit">Create an account</button>
+        </form>
+    </div>
 </body>
 </html>
