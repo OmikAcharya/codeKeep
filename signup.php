@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel = "stylesheet" href = "login.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account Form</title>
+    <title>Signup</title>
 </head>
 <body>
     <div class="form-container">
@@ -92,3 +92,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
+
+<!-- <h1>Code<span style = "color: #1a4eaf">Keep</span></h1> -->

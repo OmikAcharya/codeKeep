@@ -24,6 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<script>alert('Invalid credentials.');</script>";
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,33 +35,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login</title>
 </head>
 <body>
-    <div class = "decorDarkBlue"></div>
-    <div class = "decorLightBlue"></div>
-    <form class = "container" action="login.php" method="POST"> 
-        <img src="https://picsum.photos/1600/1200" alt="bg" />
-        <div class = "login">
-            <div class="box">
-                <h1>Code<span style = "color: #1a4eaf">Keep</span></h1>
-                <div class="input-form">
-                    <input type="email" name="email" required>
-                    <label style="color: white;">
-                        <span style="transition-delay:0ms">E</span><span style="transition-delay:50ms">m</span><span style="transition-delay:100ms">a</span><span style="transition-delay:150ms">i</span><span style="transition-delay:200ms">l</span>
-                    </label>
-                </div>
-                <div class="input-form">
-                    <input type="password" name="password" required=true>
-                    <label style="color: white;">
-                        <span style="transition-delay:0ms">P</span><span style="transition-delay:50ms">a</span><span style="transition-delay:100ms">s</span><span style="transition-delay:150ms">s</span><span style="transition-delay:200ms">w</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">r</span><span style="transition-delay:350ms">d</span>
-                    </label>
-                </div>
-                <button class="button">
-                    Login
-                </button>
-                <p style="padding: 12px 0;">Don't have an account?</p>
-                <p><a href="signup.php" style="color: #1a4eaf; text-decoration: none; cursor: pointer;">Sign Up</a></p>
-  
-            </div>
+    <div class="form-container">
+        <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;">
+            <h1>Code<span style="color: #1a4eaf">Keep</span></h1>
+            <h1><span style="text-align: left;">Login</span></h1>
         </div>
-    </form>
+        <form>
+            <div class="form-group">
+                <label for="lastName">Enter Email</label>
+                <input required type="email" id="lastName" placeholder="Email">
+            </div>
+            <div class="form-group" style = "padding-bottom: 10px">
+                <label for="workEmail">Password</label>
+                <input required type="password" id="workEmail" placeholder="Password">
+            </div>
+            <button type="submit" style = "padding-bottom: 10px">Login</button>
+        </form>
+    </div>
 </body>
 </html>
+
+<!-- <h1>Code<span style = "color: #1a4eaf">Keep</span></h1> -->
