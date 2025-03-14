@@ -1,12 +1,13 @@
-<!-- <div?php
+<?php
 require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm-password'] ?? '';
 
-    if (empty($name) || empty($email) || empty($password)) {
+    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         echo "<script>
                 alert('All fields are required.');
                 window.location.href = 'signup.php';
@@ -17,6 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>
                 alert('Invalid email format.');
+                window.location.href = 'signup.php';
+              </script>";
+        exit;
+    }
+
+    if ($password !== $confirm_password) {
+        echo "<script>
+                alert('Passwords do not match.');
                 window.location.href = 'signup.php';
               </script>";
         exit;
@@ -51,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-?> -->
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -64,24 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="form-container">
         <h1>Create your account</h1>
-        <form>
+        <form method="POST">
             <div class="form-row">
                 <div class="form-group">
                     <label for="firstName">Enter Name</label>
-                    <input required type="text" id="firstName" placeholder="Name">
+                    <input required type="text" id="firstName" placeholder="Name" name=name>
                 </div>
                 <div class="form-group">
                     <label for="lastName">Enter Email</label>
-                    <input required type="email" id="lastName" placeholder="Email">
+                    <input required type="email" id="lastName" placeholder="Email" name=email>
                 </div>
             </div>
             <div class="form-group">
                 <label for="workEmail">Password</label>
-                <input required type="password" id="workEmail" placeholder="Password">
+                <input required type="password" id="workEmail" placeholder="Password" name=password>
             </div>
             <div class="form-group">
                 <label for="workEmail">Confirm Password</label>
-                <input required type="password" id="workEmail" placeholder="Re-enter Password">
+                <input required type="password" id="workEmail" placeholder="Re-enter Password" name=confirm-password>
             </div>
             <div class="checkbox-container">
                 <input required type="checkbox" id="terms">

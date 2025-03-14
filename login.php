@@ -40,14 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1>Code<span style="color: #1a4eaf">Keep</span></h1>
             <h1><span style="text-align: left;">Login</span></h1>
         </div>
-        <form>
+        <form method="POST">
             <div class="form-group">
                 <label for="lastName">Enter Email</label>
-                <input required type="email" id="lastName" placeholder="Email">
+                <input required type="email" id="lastName" placeholder="Email" name=email />
             </div>
             <div class="form-group" style = "padding-bottom: 10px">
                 <label for="workEmail">Password</label>
-                <input required type="password" id="workEmail" placeholder="Password">
+                <input required type="password" id="workEmail" placeholder="Password" name=password />
             </div>
             <button type="submit" style = "padding-bottom: 10px">Login</button>
         </form>
