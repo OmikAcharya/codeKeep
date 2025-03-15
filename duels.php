@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Duels</title>
 </head>
-<body>
+<body style = "font-family: 'Poppins', sans-serif;">
     <div class = "container">
         <aside class = "sidebar">
             <a href="./dashboard.php" class="sidebar-button">
@@ -26,7 +26,7 @@
             <div class = "pleaseRegister">
                 <h1>Please verify your</h1>
                 <h1>CodeForces Account first!</h1>
-                <button onclick="window.location.href='./dashboard.php'">Verify Now</button>
+                <button onclick="window.location.href='./verifyForces.php'">Verify Now</button>
             </div>
         </div>
         
