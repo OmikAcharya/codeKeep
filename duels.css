@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* background-color: rgb(0, 0, 0); */
+    background-color: rgb(8, 14, 17);
+    /* above is ogColor of site */
+    color: #e0e0e0;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+}
+
+.centerAlign {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.pleaseRegister {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 36px;
+    gap: 10px;
+}
+
+.pleaseRegister button {
+    /* width: calc(50% - 250px); */
+    margin-top: 10px;
+    padding: 14px;
+    background-color: #6366f1;
+    color: white;
+    border: none;   
+    border-radius: 9999px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    /* transition: background-color 0.2s; */
+}
+.pleaseRegister button:hover {
+    transition: background-color 0.2s;
+    background-color: #27236e;
+}
+
+.sidebar {
+    width: 60px;
+    height: 100%;
+    min-height: 100vh;
+    border-right: 2px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 25px;
+}
+
+.sidebar-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sidebar-button {
+    display: inline-flex; /* Align icon properly */
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Adjust as needed */
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Makes it inherit the normal text color */
+}
+
+.sidebar-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
