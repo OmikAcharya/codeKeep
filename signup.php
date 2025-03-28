@@ -83,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert_stmt->bind_param("sss", $name, $email, $password);
         
         if ($insert_stmt->execute()) {
-            // Success
             $insert_stmt->close();
             echo "<script>
                     alert('Account created successfully! Please login.');

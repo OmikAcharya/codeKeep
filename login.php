@@ -17,6 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $hashed_pw)) {
             $_SESSION['name'] = $name;
             $_SESSION['email'] = $email;
+            $cookie_name = "user";
+            $cookie_value = $name;
+            setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/");
             header("Location: dashboard.php");
             exit;
         }

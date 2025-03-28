@@ -59,7 +59,7 @@
       </div>
     </section>
 
-    <div class="accordion">
+    <!-- <div class="accordion">
     <div class="accordion-item">
         <input type="radio" id="section1" name="accordion" />
         <label for="section1" class="accordion-header">
@@ -130,7 +130,7 @@
         <p>This is the content for Section 3.</p>
         </div>
     </div>
-    </div>
+    </div> -->
 
   
     <script src="index.js"></script>
