@@ -3,33 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>codeKeep</title>
+    <title>CodeCase</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <nav>
         <ul class="nav-links">
-            <h1>codeKeep</h1>
+            <h1>CodeCase</h1>
+        </ul>
+        <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#features">Features</a></li>
-            <li><a href="#faq">Faqs</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
         </ul>
         <ul class="nav-buttons">
             <li><a href="login.php">Login</a></li>
             <li><a href="signup.php">Sign Up</a></li>
         </ul>
     </nav>
-    <main>
-        <div class="container" id="home">
-            <h1 style="color: #02c6f1;">CodeKeep</h1>
-            <p style="text-align: center;">
-              <span style="font-size: 36px; padding: 0.5rem; font-weight: bold; ">Learn</span>
-              <span style="font-size: 36px; padding: 0.5rem; font-weight: bold; ">Practice</span>
-              <span style="font-size: 36px; padding: 0.5rem; font-weight: bold; ">Revise</span>
-            </p>
-            <a href="signup.php"><button class="btn">Get Started for Free</button></a>
+
+    <!-- Merged Hero Section with new Klu-inspired design -->
+    <main class="hero-section" id="home">
+        <div class="container">
+            <h1 class="hero-title">Learn, Practice & Compete</h1>
+            
+            <p>Connect all your competitive programming resources in one place.</p>
+            
+            
+            <button class="cta-button">TRY CODECASE NOW</button>
+            
+            <div class="platforms">
+                <div class="platform-icon" title="Codeforces">CF</div>
+                <div class="platform-icon" title="LeetCode">LC</div>
+                <div class="platform-icon" title="CodeChef">CC</div>
+            </div>
         </div>
     </main>
+
     <section class="stack-area" id="features">
       <div class="left">
         <div class="title">Our Features</div>
@@ -58,80 +69,6 @@
         </div>
       </div>
     </section>
-
-    <!-- <div class="accordion">
-    <div class="accordion-item">
-        <input type="radio" id="section1" name="accordion" />
-        <label for="section1" class="accordion-header">
-        <label class="accordion-title">Section 1</label>
-        <div class="accordion-icon">
-            <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            height="16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-            <path
-                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
-                fill="currentColor"
-            ></path>
-            </svg>
-        </div>
-        </label>
-        <div class="content">
-        <p>This is the content for Section 1.</p>
-        </div>
-    </div>
-
-    <div class="accordion-item">
-        <input checked="" type="radio" id="section2" name="accordion" />
-        <label for="section2" class="accordion-header">
-        <label class="accordion-title">Section 2</label>
-        <div class="accordion-icon">
-            <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            height="16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-            <path
-                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
-                fill="currentColor"
-            ></path>
-            </svg>
-        </div>
-        </label>
-        <div class="content">
-        <p>This is the content for Section 2.</p>
-        </div>
-    </div>
-    <div class="accordion-item">
-        <input type="radio" id="section3" name="accordion" />
-        <label for="section3" class="accordion-header">
-        <label class="accordion-title">Section 3</label>
-        <div class="accordion-icon">
-            <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            height="16"
-            width="16"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-            <path
-                d="M4.293 5.293a1 1 0 0 1 1.414 0L8 7.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 0 1 0-1.414z"
-                fill="currentColor"
-            ></path>
-            </svg>
-        </div>
-        </label>
-        <div class="content">
-        <p>This is the content for Section 3.</p>
-        </div>
-    </div>
-    </div> -->
-
   
     <script src="index.js"></script>
 </body>

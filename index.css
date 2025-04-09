@@ -1,19 +1,19 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     scroll-behavior: smooth;
 }
 
-body{
+body {
     font-family: 'Poppins', sans-serif;
     background-color: #080E11;
     background-image: radial-gradient(#444df744 2px, black 2px);
     background-size: 100px 100px;
-
 }
 
-nav{
+/* Navigation Styles */
+nav {
     position: fixed;
     top: 24px;
     left: 50%;
@@ -23,64 +23,109 @@ nav{
     align-items: center;
     padding: 2vh 3vw;
     background-color: #1A1D21;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     width: 80vw;
     border-radius: 50px;
     box-shadow: 0px 0px 30px #1a4eaf;
     z-index: 1000;
-    
 }
 
-.nav-links h1{
+.nav-links h1 {
     color: #fff;
     font-size: 1.5rem;
     font-weight: 600;
     text-transform: uppercase;
 }
 
-nav ul{
+nav ul {
     display: flex;
     gap: 20px;
     list-style: none;
     justify-content: start;
     align-items: center;
-
 }
 
-nav ul li a{
+nav ul li a {
     color: white;
     text-decoration: none;
 }
 
-main{
-    display: flex;
-    justify-content: space-around;
-    align-items: start;
-    height: 100%;
-    max-width: 80vw;
-    margin: 0 auto;
-}
-
-.container{
+/* Hero Section Styles - Merged with Klu-inspired design */
+.hero-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    margin-top: 100px;
+    min-height: 80vh;
+    text-align: center;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     max-width: 1440px;
     margin: 0 auto;
     color: #fff;
 }
 
-.container h1{
-    font-size: 8rem;
+.hero-title {
+    font-size: 5rem;
     font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 0;
+    text-align: center;
 }
 
-.btn{
+.hero-subtitle {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #02c6f1;
+    margin-top: 0;
+    text-align: center;
+}
+
+
+.platforms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.platform-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #102235;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(26, 78, 175, 0.3);
+}
+
+.cta-button {
+    padding: 15px 30px;
+    background-color: #1a4eaf;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.cta-button:hover {
+    background-color: #02c6f1;
+    transform: translateY(-2px);
+}
+
+/* Original Button Style - Kept for other sections */
+.btn {
     padding: 24px 36px;
     margin: 24px;
     border-start-end-radius: 24px;
@@ -90,6 +135,7 @@ main{
     box-shadow: 0px 20px 10px #1a4eaf;
 }
 
+/* Features Section Styles */
 .stack-area {
     width: 100%;
     height: 300vh;
@@ -98,12 +144,18 @@ main{
     color: white;
     display: flex;
 }
+
 .left {
     height: 100vh;
     flex-basis: 50%;
     position: sticky;
     top: 0;
     left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-direction: column;
 }
 
 .right {
@@ -111,15 +163,6 @@ main{
     flex-basis: 50%;
     position: sticky;
     top: 0;
-}
-
-.left {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    align-items: center;
-    flex-direction: column;
 }
 
 .title {
@@ -150,7 +193,6 @@ main{
     margin-top: 20px;
 }
 
-
 .card {
     width: 350px;
     height: 350px;
@@ -160,6 +202,11 @@ main{
     top: calc(50% - 175px);
     left: calc(50% - 175px);
     transition: 0.5s ease-in-out;
+    box-sizing: border-box;
+    padding: 35px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .card:nth-child(1) {
@@ -178,19 +225,12 @@ main{
     background: rgb(247, 92, 208);
 }
 
-.card {
-    box-sizing: border-box;
-    padding: 35px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
-
 .sub {
     font-family: poppins;
     font-size: 20px;
     font-weight: 700;
 }
+
 .content {
     font-family: poppins;
     font-size: 20px;
@@ -201,7 +241,8 @@ main{
     transform-origin: bottom left;
 }
 
-.footer{
+/* Footer Styles */
+.footer {
     color: white;
     text-align: center;
     font-size: 24px;
@@ -209,44 +250,49 @@ main{
     background-color: #080E11;
 }
 
+/* Accordion Styles */
 .accordion {
     width: 300px;
     margin: 0 auto;
-  }
+}
   
-  .accordion-item {
+.accordion-item {
     margin-bottom: 5px;
-  }
+}
   
-  .accordion-item .content {
+.accordion-item .content {
     font-size: 12px;
-  }
+}
   
-  .accordion input[type="radio"] {
+.accordion input[type="radio"] {
     display: none;
-  }
+}
   
-  .accordion .content {
+.accordion .content {
     height: 0px;
     padding: 0px;
     background-color: #fafafa;
     border-top: 1px solid #ccc;
     overflow: hidden;
     transition: all 0.3s ease;
-  }
-  .accordion input[type="radio"]:checked + .accordion-header + .content {
+}
+
+.accordion input[type="radio"]:checked + .accordion-header + .content {
     height: auto;
     padding: 15px;
-  }
-  .accordion-icon {
+}
+
+.accordion-icon {
     display: flex;
     align-items: center;
     transition: all 0.5s ease;
-  }
-  .accordion input[type="radio"]:checked + .accordion-header .accordion-icon {
+}
+
+.accordion input[type="radio"]:checked + .accordion-header .accordion-icon {
     transform: rotate(180deg);
-  }
-  .accordion-header {
+}
+
+.accordion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -255,8 +301,8 @@ main{
     cursor: pointer;
     font-weight: bold;
     text-align: left;
-  }
-  .accordion-header .accordion-title {
+}
+
+.accordion-header .accordion-title {
     font-size: 14px;
-  }
-  
+}
