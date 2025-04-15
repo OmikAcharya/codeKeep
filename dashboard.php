@@ -12,7 +12,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
 
     $stmt = $conn->prepare("SELECT codechef_id, leetcode_id, codeforces_id FROM profile WHERE Uemail = ?");
-    
+
     if ($stmt) {
         $stmt->bind_param("s", $email);  // Bind the email as a string
         $stmt->execute();
@@ -44,7 +44,7 @@ function getCodeforcesRating($username) {
 $leetcode_rating = !empty($leetcode_id) ? getLeetcodeRating($leetcode_id) : "N/A";
 $codechef_rating = !empty($codechef_id) ? getCodechefRating($codechef_id) : "N/A";
 $codeforces_rating = !empty($codeforces_id) ? getCodeforcesRating($codeforces_id) : "N/A";
-$total_rating = is_numeric($leetcode_rating) && is_numeric($codechef_rating) && is_numeric($codeforces_rating) ? 
+$total_rating = is_numeric($leetcode_rating) && is_numeric($codechef_rating) && is_numeric($codeforces_rating) ?
                 ($leetcode_rating + $codechef_rating + $codeforces_rating) / 3 : "N/A";
 
 // Fetch contests
@@ -94,11 +94,11 @@ usort($merged_future_contests, function ($a, $b) {
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeCase</span>
         </div>
-        
+
         <div class="nav-menu">
-            <a href="#" class="nav-item active">
+            <a href="dashboard.php" class="nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
@@ -106,30 +106,21 @@ usort($merged_future_contests, function ($a, $b) {
                 <i class="fas fa-users"></i>
                 <span>All Users</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="contests.php" class="nav-item">
                 <i class="fas fa-calendar"></i>
                 <span>Contests</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="problems.php" class="nav-item">
                 <i class="fas fa-code"></i>
                 <span>Problems</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="notes.php" class="nav-item">
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
-        </div>
-        
-        <div class="logo">
-            <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text"></span>
         </div>
     </div>
-    
+
     <!-- Main Content -->
     <div class="main-content">
         <!-- Stats Cards -->
@@ -144,7 +135,7 @@ usort($merged_future_contests, function ($a, $b) {
                     <span><?php echo htmlspecialchars($leetcode_id); ?></span>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-title">
                     <i class="fas fa-utensils codechef-icon"></i>
@@ -155,7 +146,7 @@ usort($merged_future_contests, function ($a, $b) {
                     <span><?php echo htmlspecialchars($codechef_id); ?></span>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-title">
                     <i class="fas fa-laptop-code codeforces-icon"></i>
@@ -165,9 +156,9 @@ usort($merged_future_contests, function ($a, $b) {
                 <div class="stat-change">
                     <span><?php echo htmlspecialchars($codeforces_id); ?></span>
                 </div>
-            </div>  
+            </div>
         </div>
-        
+
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Left Column -->
@@ -177,24 +168,24 @@ usort($merged_future_contests, function ($a, $b) {
                     <div class="card-header">
                         <div class="card-title">Performance</div>
                     </div>
-                    
+
                     <div class="chart-container">
                         <p>Performance data will be displayed here</p>
                     </div>
                 </div>
-                
+
                 <!-- Total Count Card -->
                 <div class="dashboard-card">
                     <div class="card-header">
                         <div class="card-title">Total Solved Problems</div>
                     </div>
-                    
+
                     <div class="donut-chart">
                         <div class="donut-ring"></div>
                         <div class="donut-hole">
                             <div class="donut-label">Total</div>
                             <div class="donut-value">
-                                <?php 
+                                <?php
                                     // This is a placeholder - implement actual count
                                     echo rand(100, 500);
                                 ?>
@@ -203,7 +194,7 @@ usort($merged_future_contests, function ($a, $b) {
                     </div>
                 </div>
             </div>
-            
+
             <!-- Right Column -->
             <div class="right-column">
                 <!-- Contests Card -->
@@ -211,11 +202,11 @@ usort($merged_future_contests, function ($a, $b) {
                     <div class="card-header">
                         <div class="card-title">Upcoming Contests</div>
                     </div>
-                    
+
                     <div class="details-list">
-                        <?php 
+                        <?php
                         $count = 0;
-                        foreach ($merged_future_contests as $contest) { 
+                        foreach ($merged_future_contests as $contest) {
                             if ($count >= 5) break; // Limit to 5 contests
                         ?>
                             <div class="details-item">
@@ -230,10 +221,10 @@ usort($merged_future_contests, function ($a, $b) {
                                     </div>
                                 </div>
                             </div>
-                        <?php 
+                        <?php
                             $count++;
-                        } 
-                        
+                        }
+
                         if (count($merged_future_contests) === 0) {
                             echo '<div class="details-item"><div class="details-value">No upcoming contests found.</div></div>';
                         }
@@ -242,6 +233,11 @@ usort($merged_future_contests, function ($a, $b) {
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Database Setup Link (for admin/development purposes) -->
+    <div style="text-align: center; margin-top: 20px; padding: 10px; background-color: #1e2130; border-radius: 5px;">
+        <a href="setup_db.php" style="color: #a0aec0; text-decoration: none; font-size: 12px;">Initialize/Update Database</a>
     </div>
 
     <script>
