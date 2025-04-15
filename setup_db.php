@@ -47,6 +47,36 @@ $sql_saved_contests = "CREATE TABLE IF NOT EXISTS saved_contests (
     UNIQUE KEY user_contest (user_email, platform, contest_code)
 )";
 
+// Create solved_problems table
+$sql_solved_problems = "CREATE TABLE IF NOT EXISTS solved_problems (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255) NOT NULL,
+    problem_id INT NOT NULL,
+    solution_code TEXT,
+    language VARCHAR(50),
+    time_taken INT,  -- Time taken in minutes
+    solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE,
+    UNIQUE KEY user_problem (user_email, problem_id)
+)";
+
+// Create user_statistics table
+$sql_user_statistics = "CREATE TABLE IF NOT EXISTS user_statistics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255) NOT NULL,
+    total_solved INT DEFAULT 0,
+    easy_solved INT DEFAULT 0,
+    medium_solved INT DEFAULT 0,
+    hard_solved INT DEFAULT 0,
+    leetcode_solved INT DEFAULT 0,
+    codechef_solved INT DEFAULT 0,
+    codeforces_solved INT DEFAULT 0,
+    streak_days INT DEFAULT 0,
+    last_solved_date DATE,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY user_stats (user_email)
+)";
+
 // Execute the SQL statements
 if ($conn->query($sql_problems) === TRUE) {
     echo "Table 'problems' created successfully<br>";
@@ -70,6 +100,18 @@ if ($conn->query($sql_saved_contests) === TRUE) {
     echo "Table 'saved_contests' created successfully<br>";
 } else {
     echo "Error creating table 'saved_contests': " . $conn->error . "<br>";
+}
+
+if ($conn->query($sql_solved_problems) === TRUE) {
+    echo "Table 'solved_problems' created successfully<br>";
+} else {
+    echo "Error creating table 'solved_problems': " . $conn->error . "<br>";
+}
+
+if ($conn->query($sql_user_statistics) === TRUE) {
+    echo "Table 'user_statistics' created successfully<br>";
+} else {
+    echo "Error creating table 'user_statistics': " . $conn->error . "<br>";
 }
 
 // Insert some sample problems
@@ -133,10 +175,10 @@ if ($problem_count == 0) {
         $problem_url = $problem['problem_url'];
         $description = $problem['description'];
         $tags = $problem['tags'];
-        
+
         $stmt->execute();
     }
-    
+
     echo "Sample problems inserted successfully<br>";
     $stmt->close();
 } else {
@@ -146,14 +188,14 @@ if ($problem_count == 0) {
 // Insert sample notes if the user exists
 if (isset($_SESSION['email'])) {
     $user_email = $_SESSION['email'];
-    
+
     // Check if notes already exist for this user
     $check_notes = $conn->prepare("SELECT COUNT(*) as count FROM notes WHERE user_email = ?");
     $check_notes->bind_param("s", $user_email);
     $check_notes->execute();
     $result = $check_notes->get_result();
     $note_count = $result->fetch_assoc()['count'];
-    
+
     if ($note_count == 0) {
         // Sample notes
         $sample_notes = [
@@ -187,20 +229,20 @@ unordered_map: Hash table with key-value pairs',
                 'category' => 'Programming'
             ]
         ];
-        
+
         // Prepare statement for inserting notes
         $stmt = $conn->prepare("INSERT INTO notes (user_email, title, content, category) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $user_email, $title, $content, $category);
-        
+
         // Insert each note
         foreach ($sample_notes as $note) {
             $title = $note['title'];
             $content = $note['content'];
             $category = $note['category'];
-            
+
             $stmt->execute();
         }
-        
+
         echo "Sample notes inserted successfully<br>";
         $stmt->close();
     } else {

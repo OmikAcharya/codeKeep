@@ -5,24 +5,45 @@ if (!isset($_SESSION['email'])) {
     die("Session error: User not logged in.");
 }
 
+// Check if user has existing profile data
+$userEmail = $_SESSION['email'];
+$existingProfile = null;
 
+$checkProfile = $conn->prepare("SELECT codechef_id, codeforces_id, leetcode_id FROM profile WHERE Uemail = ?");
+$checkProfile->bind_param("s", $userEmail);
+$checkProfile->execute();
+$result = $checkProfile->get_result();
+
+if ($result->num_rows > 0) {
+    $existingProfile = $result->fetch_assoc();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $codechef_id = $_POST['codechef_id'] ?? '';
     $codeforces_id = $_POST['codeforces_id'] ?? '';
     $leetcode_id = $_POST['leetcode_id'] ?? '';
 
-    $stmt = $conn->prepare("INSERT INTO profile(Uemail, codechef_id, codeforces_id, leetcode_id) VALUES(?,?,?,?)");
-    $stmt->bind_param("ssss", $_SESSION['email'], $codechef_id, $codeforces_id, $leetcode_id);
+    if ($existingProfile) {
+        // Update existing profile
+        $stmt = $conn->prepare("UPDATE profile SET codechef_id = ?, codeforces_id = ?, leetcode_id = ? WHERE Uemail = ?");
+        $stmt->bind_param("ssss", $codechef_id, $codeforces_id, $leetcode_id, $userEmail);
+    } else {
+        // Insert new profile
+        $stmt = $conn->prepare("INSERT INTO profile(Uemail, codechef_id, codeforces_id, leetcode_id) VALUES(?,?,?,?)");
+        $stmt->bind_param("ssss", $userEmail, $codechef_id, $codeforces_id, $leetcode_id);
+    }
     $stmt->execute();
 
-    echo "Data inserted successfully!";
+    echo "Profile updated successfully!";
     header("Location: dashboard.php");
     exit;
 }
+
+// Initialize variables with empty values or existing profile values
+$codechef_value = $existingProfile ? $existingProfile['codechef_id'] : '';
+$codeforces_value = $existingProfile ? $existingProfile['codeforces_id'] : '';
+$leetcode_value = $existingProfile ? $existingProfile['leetcode_id'] : '';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,35 +66,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
             max-width: 600px;
             width: 100%;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        button {
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h1>Code<span style="color: #1a4eaf">Keep</span></h1>
-        <form action="profile.php" method="POST" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
-            <div class="input-form">
-                <input type="text" name="codechef_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">C</span><span style="transition-delay:50ms">o</span><span style="transition-delay:100ms">d</span><span style="transition-delay:150ms">e</span><span style="transition-delay:200ms">c</span><span style="transition-delay:250ms">h</span><span style="transition-delay:300ms">e</span><span style="transition-delay:350ms">f</span><span style="transition-delay:400ms"> </span><span style="transition-delay:450ms">I</span><span style="transition-delay:500ms">D</span>
-                </label>
+        <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; width: 100%;">
+            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
+            <h1><span style="text-align: left;">Connect Profiles</span></h1>
+        </div>
+        <form action="profile.php" method="POST" style="width: 100%;">
+            <div class="form-group">
+                <label for="codechef">CodeChef ID</label>
+                <input type="text" id="codechef" name="codechef_id" placeholder="CodeChef ID" value="<?php echo htmlspecialchars($codechef_value); ?>" required>
             </div>
-            <div class="input-form">
-                <input type="text" name="codeforces_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">C</span><span style="transition-delay:50ms">o</span><span style="transition-delay:100ms">d</span><span style="transition-delay:150ms">e</span><span style="transition-delay:200ms">f</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">r</span><span style="transition-delay:350ms">c</span><span style="transition-delay:400ms">e</span><span style="transition-delay:450ms">s</span><span style="transition-delay:500ms"> </span><span style="transition-delay:550ms">I</span><span style="transition-delay:600ms">D</span>
-                </label>
+            <div class="form-group">
+                <label for="codeforces">Codeforces ID</label>
+                <input type="text" id="codeforces" name="codeforces_id" placeholder="Codeforces ID" value="<?php echo htmlspecialchars($codeforces_value); ?>" required>
             </div>
-            <div class="input-form">
-                <input type="text" name="leetcode_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">L</span><span style="transition-delay:50ms">e</span><span style="transition-delay:100ms">e</span><span style="transition-delay:150ms">t</span><span style="transition-delay:200ms">c</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">d</span><span style="transition-delay:350ms">e</span><span style="transition-delay:400ms"> </span><span style="transition-delay:450ms">I</span><span style="transition-delay:500ms">D</span>
-                </label>
+            <div class="form-group" style="padding-bottom: 10px">
+                <label for="leetcode">LeetCode ID</label>
+                <input type="text" id="leetcode" name="leetcode_id" placeholder="LeetCode ID" value="<?php echo htmlspecialchars($leetcode_value); ?>" required>
             </div>
-            <button class="button" align="center">
-                Connect
+            <button type="submit" style="padding-bottom: 10px">
+                <?php echo $existingProfile ? 'Update Profiles' : 'Connect Profiles'; ?>
             </button>
         </form>
+        <div style="display: flex; justify-content: center; margin-top: 10px; gap: 5px;">
+            <a href="dashboard.php">Back to Dashboard</a>
+        </div>
     </div>
 </body>
 </html>

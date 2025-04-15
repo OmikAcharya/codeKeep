@@ -613,6 +613,17 @@ $category_stmt->close();
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
+            <a href="statistics.php" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistics</span>
+            </a>
+        </div>
+
+        <div class="configure-profiles">
+            <a href="profile.php" class="configure-btn">
+                <i class="fas fa-user-cog"></i>
+                <span>Configure Profiles</span>
+            </a>
         </div>
 
         <div class="user-profile">
