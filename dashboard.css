@@ -14,7 +14,9 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
+   
     width: 220px;
+    height:100vh;
     background-color: #171923;
     padding: 20px 0;
     display: flex;
@@ -227,6 +229,7 @@ body {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
+
 }
 
 .card-header {

@@ -124,6 +124,18 @@ usort($merged_future_contests, function ($a, $b) {
                 <span>Notes</span>
             </a>
         </div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <?php echo substr($name, 0, 1); ?>
+            </div>
+            <div class="user-info">
+                <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
+                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+            </div>
+            <button class="logout-btn" onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -183,7 +195,7 @@ usort($merged_future_contests, function ($a, $b) {
                 </div>
 
                 <!-- Total Count Card -->
-                <div class="dashboard-card">
+                <div class="dashboard-card" style="height:50vh">
                     <div class="card-header">
                         <div class="card-title">Total Solved Problems</div>
                     </div>
@@ -243,10 +255,7 @@ usort($merged_future_contests, function ($a, $b) {
         </div>
     </div>
 
-    <!-- Database Setup Link (for admin/development purposes) -->
-    <div style="text-align: center; margin-top: 20px; padding: 10px; background-color: #1e2130; border-radius: 5px;">
-        <a href="setup_db.php" style="color: #a0aec0; text-decoration: none; font-size: 12px;">Initialize/Update Database</a>
-    </div>
+  
 
     <script>
         function confirmLogout() {
@@ -255,6 +264,7 @@ usort($merged_future_contests, function ($a, $b) {
                 window.location.href = 'logout.php';
             }
         }
+        
     </script>
 </body>
 
