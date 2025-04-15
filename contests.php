@@ -176,19 +176,20 @@ $saved_filter = isset($_GET['saved']) && $_GET['saved'] === '1';
 $filtered_contests = $all_contests;
 
 if ($platform_filter !== 'all') {
-    $filtered_contests = array_filter($filtered_contests, function($contest) use ($platform_filter) {
+    $filtered_contests = array_filter($filtered_contests, function ($contest) use ($platform_filter) {
         return strtolower($contest['platform']) === strtolower($platform_filter);
     });
 }
 
 if ($saved_filter) {
-    $filtered_contests = array_filter($filtered_contests, function($contest) {
+    $filtered_contests = array_filter($filtered_contests, function ($contest) {
         return $contest['saved'] === true;
     });
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -508,9 +509,17 @@ if ($saved_filter) {
 
         /* Loading animation */
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
         }
 
         /* Main heading animations */
@@ -534,8 +543,40 @@ if ($saved_filter) {
             background: linear-gradient(to right, #3182ce, #2c5282);
             border-radius: 2px;
         }
+
+        .back-to-dashboard-btn {
+            position: absolute; /* Position the button absolutely */
+            top: 20px; /* Distance from the top */
+            right: 20px; /* Distance from the right */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+            z-index: 10; /* Ensure it stays above other elements */
+        }
+
+        .back-to-dashboard-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .back-to-dashboard-btn i {
+            font-size: 16px;
+        }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
@@ -562,8 +603,8 @@ if ($saved_filter) {
                 <span>Problems</span>
             </a>
             <a href="notes.php" class="nav-item">
-           
-            <i class="fas fa-sticky-note"></i>
+
+                <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
         </div>
@@ -595,10 +636,15 @@ if ($saved_filter) {
     flex-direction: column;
     border-right: 1px solid #2d3748;">
 
-     </div>
+    </div>
 
     <!-- Main Content -->
     <div class="main-content">
+        <!-- Back to Dashboard Button -->
+        <a href="dashboard.php" class="back-to-dashboard-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
         <h1>Upcoming Contests</h1>
         <p>Stay updated with all the upcoming competitive programming contests.</p>
 
@@ -645,7 +691,7 @@ if ($saved_filter) {
 
                         <div class="contest-actions">
                             <button class="contest-btn save-btn <?php echo $contest['saved'] ? 'saved' : ''; ?>"
-                                    onclick="saveContest('<?php echo htmlspecialchars($contest['platform']); ?>',
+                                onclick="saveContest('<?php echo htmlspecialchars($contest['platform']); ?>',
                                                      '<?php echo htmlspecialchars($contest['contest_name']); ?>',
                                                      '<?php echo htmlspecialchars($contest['contest_code']); ?>',
                                                      '<?php echo htmlspecialchars($contest['contest_start_date']); ?>',
@@ -701,25 +747,26 @@ if ($saved_filter) {
 
             // Send AJAX request
             fetch('contests.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update button appearance
-                    button.classList.add('saved');
-                    button.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
-                    alert(data.message);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while saving the contest.');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button appearance
+                        button.classList.add('saved');
+                        button.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving the contest.');
+                });
         }
     </script>
 </body>
+
 </html>

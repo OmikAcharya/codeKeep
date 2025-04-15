@@ -581,6 +581,40 @@ $category_stmt->close();
             background-color: transparent;
             padding: 0;
         }
+        .back-to-dashboard-btn {
+            position: absolute;
+            /* Position the button absolutely */
+            top: 20px;
+            /* Distance from the top */
+            right: 20px;
+            /* Distance from the right */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+            z-index: 10;
+            /* Ensure it stays above other elements */
+        }
+
+        .back-to-dashboard-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .back-to-dashboard-btn i {
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -651,7 +685,9 @@ $category_stmt->close();
     <div class="main-content">
         <h1>Notes</h1>
         <p>Store and organize your programming notes, algorithms, and code snippets.</p>
-
+        <a href="dashboard.php" class="back-to-dashboard-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
         <div class="notes-container">
             <!-- Notes Sidebar -->
             <div class="notes-sidebar">
