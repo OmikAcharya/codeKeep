@@ -206,7 +206,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
                     <th>Rank</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th class="platform-header"><i class="platform-logo fab fa-node-js"></i>LeetCode</th>
+                    <th class="platform-header"><i class="platform-logo fas fa-laptop-code"></i>LeetCode</th>
                     <th class="platform-header"><i class="platform-logo fas fa-utensils"></i>CodeChef</th>
                     <th class="platform-header"><i class="platform-logo fas fa-code"></i>Codeforces</th>
                     <th>Total</th>
