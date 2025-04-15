@@ -649,7 +649,7 @@ $category_stmt->close();
         <h1>Notes</h1>
         <p>Store and organize your programming notes, algorithms, and code snippets.</p>
 
-        <div class="notes-container">
+        <div class="notes-container" style="padding: 20px 0;">
             <!-- Notes Sidebar -->
             <div class="notes-sidebar">
                 <div class="notes-header">

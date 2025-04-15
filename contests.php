@@ -189,25 +189,6 @@ if ($saved_filter) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="contests.css">
-    <style>
-        .time-ist {
-            color: #48bb78;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .time-ist i {
-            color: #f6ad55;
-        }
-
-        /* Highlight the IST label */
-        .detail-label.ist-label {
-            color: #f6ad55;
-            font-weight: 500;
-        }
-    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -275,13 +256,12 @@ if ($saved_filter) {
         <h1>Upcoming Contests</h1>
         <p>Stay updated with all the upcoming competitive programming contests.</p>
 
-        <div class="filter-container">
+        <div class="filter-container" style="padding: 20px 0;">
             <a href="?platform=all<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'all' ? 'active' : ''; ?>">All Platforms</a>
             <a href="?platform=codechef<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codechef' ? 'active' : ''; ?>">CodeChef</a>
             <a href="?platform=codeforces<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codeforces' ? 'active' : ''; ?>">Codeforces</a>
             <a href="?platform=leetcode<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'leetcode' ? 'active' : ''; ?>">LeetCode</a>
             <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter . '&' : ''; ?>saved=1" class="filter-btn <?php echo $saved_filter ? 'active' : ''; ?>">Saved Only</a>
-            <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter : ''; ?>" class="filter-btn <?php echo !$saved_filter ? 'active' : ''; ?>">All Contests</a>
         </div>
 
         <div class="contests-container">

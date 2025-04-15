@@ -325,13 +325,26 @@ h1 {
     margin-bottom: 0.5em;
 }
 
-h1:after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(to right, #3182ce, #2c5282);
-    border-radius: 2px;
+
+
+.time-ist {
+    color: #48bb78;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
+
+.time-ist i {
+    color: #f6ad55;
+}
+
+.detail-label.ist-label {
+    color: #f6ad55;
+    font-weight: 500;
+}
+
+a{
+    text-decoration: none;
+}
+    
