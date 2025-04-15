@@ -24,7 +24,6 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     }
 }
 
-// Handle AJAX requests for saving contests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_contest') {
     if (!isset($_SESSION['email'])) {
         echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -43,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 
-    // Check if contest is already saved
     $check_stmt = $conn->prepare("SELECT id FROM saved_contests WHERE user_email = ? AND platform = ? AND contest_code = ?");
     $check_stmt->bind_param("sss", $user_email, $platform, $contest_code);
     $check_stmt->execute();
@@ -56,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $check_stmt->close();
 
-    // Save the contest
     $stmt = $conn->prepare("INSERT INTO saved_contests (user_email, platform, contest_name, contest_code, contest_start_date, contest_end_date) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $user_email, $platform, $contest_name, $contest_code, $contest_start_date, $contest_end_date);
 
@@ -70,11 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// Fetch contests using the new API endpoints
+// Set timezone to IST
+date_default_timezone_set('Asia/Kolkata');
+
+// Function to format date in IST
+function formatDateIST($timestamp) {
+    return date('d M Y H:i:s', $timestamp) . ' IST';
+}
+
 $upcoming_contests_url = 'https://competeapi.vercel.app/contests/upcoming/';
 $leetcode_contests_url = 'https://competeapi.vercel.app/contests/leetcode/';
 
-// Fetch upcoming contests from CodeChef and Codeforces
 try {
     $upcoming_response = file_get_contents($upcoming_contests_url);
     $upcoming_data = json_decode($upcoming_response, true);
@@ -82,7 +85,6 @@ try {
     $upcoming_data = [];
 }
 
-// Fetch LeetCode contests
 try {
     $leetcode_response = file_get_contents($leetcode_contests_url);
     $leetcode_data = json_decode($leetcode_response, true);
@@ -90,27 +92,23 @@ try {
     $leetcode_data = null;
 }
 
-// Process upcoming contests from CodeChef and Codeforces
 $formatted_codechef_contests = [];
 $cf_future_contests = [];
 
 if (!empty($upcoming_data)) {
     foreach ($upcoming_data as $contest) {
-        // Convert milliseconds to seconds for timestamps
         $start_time_seconds = $contest['startTime'] / 1000;
         $end_time_seconds = $contest['endTime'] / 1000;
-        $duration_hours = $contest['duration'] / (1000 * 60 * 60); // Convert milliseconds to hours
-
-        // Extract contest code from URL
+        $duration_hours = $contest['duration'] / (1000 * 60 * 60);
         $url_parts = explode('/', rtrim($contest['url'], '/'));
         $contest_code = end($url_parts);
 
         $contest_data = [
-            'platform' => ucfirst($contest['site']), // Capitalize first letter
+            'platform' => ucfirst($contest['site']),
             'contest_name' => $contest['title'],
             'contest_code' => $contest_code,
-            'contest_start_date' => date('d M Y H:i:s', $start_time_seconds),
-            'contest_end_date' => date('d M Y H:i:s', $end_time_seconds),
+            'contest_start_date' => formatDateIST($start_time_seconds),
+            'contest_end_date' => formatDateIST($end_time_seconds),
             'duration' => round($duration_hours, 2) . ' hours',
             'url' => $contest['url']
         ];
@@ -123,7 +121,7 @@ if (!empty($upcoming_data)) {
     }
 }
 
-// Process LeetCode contests
+
 $leetcode_contests = [];
 if ($leetcode_data && isset($leetcode_data['data']) && isset($leetcode_data['data']['topTwoContests'])) {
     foreach ($leetcode_data['data']['topTwoContests'] as $contest) {
@@ -135,15 +133,14 @@ if ($leetcode_data && isset($leetcode_data['data']) && isset($leetcode_data['dat
             'platform' => 'LeetCode',
             'contest_name' => $contest['title'],
             'contest_code' => str_replace(' ', '-', strtolower($contest['title'])),
-            'contest_start_date' => date('d M Y H:i:s', $start_time_seconds),
-            'contest_end_date' => date('d M Y H:i:s', $end_time_seconds),
+            'contest_start_date' => formatDateIST($start_time_seconds),
+            'contest_end_date' => formatDateIST($end_time_seconds),
             'duration' => round($duration_hours, 2) . ' hours',
             'url' => 'https://leetcode.com/contest/'
         ];
     }
 }
 
-// Get saved contests
 $saved_contests_stmt = $conn->prepare("SELECT platform, contest_code FROM saved_contests WHERE user_email = ?");
 $saved_contests_stmt->bind_param("s", $email);
 $saved_contests_stmt->execute();
@@ -155,22 +152,18 @@ while ($row = $saved_contests_result->fetch_assoc()) {
 }
 $saved_contests_stmt->close();
 
-// Merge all contests and mark saved ones
 $all_contests = array_merge($formatted_codechef_contests, $cf_future_contests, $leetcode_contests);
 
-// Mark saved contests
 foreach ($all_contests as &$contest) {
     $contest_key = $contest['platform'] . '-' . $contest['contest_code'];
     $contest['saved'] = in_array($contest_key, $saved_contest_keys);
 }
-unset($contest); // Break the reference
+unset($contest);
 
-// Sort by start date
 usort($all_contests, function ($a, $b) {
     return strtotime($a['contest_start_date']) - strtotime($b['contest_start_date']);
 });
 
-// Filter contests if needed
 $platform_filter = $_GET['platform'] ?? 'all';
 $saved_filter = isset($_GET['saved']) && $_GET['saved'] === '1';
 $filtered_contests = $all_contests;
@@ -195,353 +188,14 @@ if ($saved_filter) {
     <title>Contests - CodeKeep</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="dashboard.css">
-    <style>
-        .filter-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .filter-btn {
-            padding: 10px 18px;
-            background-color: rgba(30, 33, 48, 0.8);
-            border: 1px solid #2d3748;
-            color: #cbd5e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .filter-btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: 0.5s;
-        }
-
-        .filter-btn:hover:before {
-            left: 100%;
-        }
-
-        .filter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            background-color: #252a3d;
-        }
-
-        .filter-btn.active {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .contests-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .contest-card {
-            background: linear-gradient(145deg, #1e2130, #1a1d2a);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contest-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .contest-card:after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 30%;
-            height: 5px;
-            background: inherit;
-            opacity: 0.3;
-            border-radius: 0 0 0 10px;
-        }
-
-        .codechef {
-            border-left-color: #3182ce;
-            box-shadow: 0 4px 20px rgba(49, 130, 206, 0.1);
-        }
-
-        .codeforces {
-            border-left-color: #805ad5;
-            box-shadow: 0 4px 20px rgba(128, 90, 213, 0.1);
-        }
-
-        .leetcode {
-            border-left-color: #f59e0b;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
-        }
-
-        .contest-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-        }
-
-        .contest-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #f7fafc;
-            margin-right: 10px;
-            line-height: 1.4;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            flex: 1;
-        }
-
-        .contest-platform {
-            font-size: 14px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-        }
-
-        .platform-codechef {
-            background: linear-gradient(135deg, #3182ce, #2c5282);
-        }
-
-        .platform-codeforces {
-            background: linear-gradient(135deg, #805ad5, #6b46c1);
-        }
-
-        .platform-leetcode {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .leetcode {
-            border-left-color: #f59e0b;
-        }
-
-        .contest-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            padding: 8px;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .detail-item:hover {
-            background-color: rgba(255, 255, 255, 0.03);
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #a0aec0;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            font-size: 14px;
-            color: #e2e8f0;
-            font-weight: 500;
-            word-break: break-word;
-        }
-
-        .contest-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .contest-btn {
-            padding: 10px 18px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
-        }
-
-        .contest-btn:hover {
-            background-color: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
-        }
-
-        .contest-btn:active {
-            transform: translateY(0);
-        }
-
-        .save-btn {
-            background-color: transparent;
-            border: 2px solid #4b5563;
-            color: #cbd5e0;
-            box-shadow: none;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .save-btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: 0.5s;
-            z-index: -1;
-        }
-
-        .save-btn:hover:before {
-            left: 100%;
-        }
-
-        .save-btn:hover {
-            background-color: #374151;
-            border-color: #6b7280;
-            color: white;
-            box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
-        }
-
-        .save-btn.saved {
-            background: linear-gradient(135deg, #48bb78, #38a169);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-        }
-
-        .save-btn.saved:hover {
-            background: linear-gradient(135deg, #38a169, #2f855a);
-        }
-
-        /* Add platform icons */
-        .platform-codechef:before {
-            content: '🍽️';
-            margin-right: 5px;
-        }
-
-        .platform-codeforces:before {
-            content: '🏆';
-            margin-right: 5px;
-        }
-
-        .platform-leetcode:before {
-            content: '💻';
-            margin-right: 5px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-            .contests-container {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .contests-container {
-                grid-template-columns: 1fr;
-            }
-
-            .contest-details {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-container {
-                overflow-x: auto;
-                padding-bottom: 10px;
-                justify-content: flex-start;
-            }
-
-            .filter-btn {
-                flex-shrink: 0;
-            }
-        }
-
-        /* Loading animation */
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-
-        /* Main heading animations */
-        h1 {
-            background: linear-gradient(135deg, #f7fafc, #cbd5e0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-            display: inline-block;
-            margin-bottom: 0.5em;
-        }
-
-        h1:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(to right, #3182ce, #2c5282);
-            border-radius: 2px;
-        }
-    </style>
+    <link rel="stylesheet" href="contests.css">
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeCase</span>
         </div>
 
         <div class="nav-menu">
@@ -562,7 +216,8 @@ if ($saved_filter) {
                 <span>Problems</span>
             </a>
             <a href="notes.php" class="nav-item">
-                <i class="fas fa-sticky-note"></i>
+           
+            <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
         </div>
@@ -580,7 +235,7 @@ if ($saved_filter) {
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -601,13 +256,12 @@ if ($saved_filter) {
         <h1>Upcoming Contests</h1>
         <p>Stay updated with all the upcoming competitive programming contests.</p>
 
-        <div class="filter-container">
+        <div class="filter-container" style="padding: 20px 0;">
             <a href="?platform=all<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'all' ? 'active' : ''; ?>">All Platforms</a>
             <a href="?platform=codechef<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codechef' ? 'active' : ''; ?>">CodeChef</a>
             <a href="?platform=codeforces<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codeforces' ? 'active' : ''; ?>">Codeforces</a>
             <a href="?platform=leetcode<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'leetcode' ? 'active' : ''; ?>">LeetCode</a>
             <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter . '&' : ''; ?>saved=1" class="filter-btn <?php echo $saved_filter ? 'active' : ''; ?>">Saved Only</a>
-            <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter : ''; ?>" class="filter-btn <?php echo !$saved_filter ? 'active' : ''; ?>">All Contests</a>
         </div>
 
         <div class="contests-container">
@@ -632,8 +286,10 @@ if ($saved_filter) {
                             </div>
 
                             <div class="detail-item">
-                                <div class="detail-label">Start Time</div>
-                                <div class="detail-value"><?php echo htmlspecialchars($contest['contest_start_date']); ?></div>
+                                <div class="detail-label ist-label">Start Time (IST)</div>
+                                <div class="detail-value time-ist">
+                                    <i class="fas fa-clock"></i> <?php echo htmlspecialchars($contest['contest_start_date']); ?>
+                                </div>
                             </div>
 
                             <div class="detail-item">
