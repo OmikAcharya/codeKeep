@@ -27,26 +27,146 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
 // Fetch ratings (you would need to implement these functions)
 function getLeetcodeRating($username)
 {
-    // This is a placeholder - implement actual API call
-    return rand(1500, 2800); // Placeholder random rating
+    if (empty($username)) {
+        return "N/A";
+    }
+
+    $url = "https://competeapi.vercel.app/user/leetcode/{$username}/";
+
+    try {
+        $response = @file_get_contents($url);
+
+        if ($response === false) {
+            return "Error";
+        }
+
+        $data = json_decode($response, true);
+
+        if (isset($data['data']) && isset($data['data']['matchedUser'])) {
+            $userData = $data['data']['matchedUser'];
+
+            // Extract problems solved by difficulty
+            $totalSolved = 0;
+            $easySolved = 0;
+            $mediumSolved = 0;
+            $hardSolved = 0;
+
+            if (isset($userData['submitStats']['acSubmissionNum'])) {
+                foreach ($userData['submitStats']['acSubmissionNum'] as $stat) {
+                    if ($stat['difficulty'] === 'All') {
+                        $totalSolved = $stat['count'];
+                    } elseif ($stat['difficulty'] === 'Easy') {
+                        $easySolved = $stat['count'];
+                    } elseif ($stat['difficulty'] === 'Medium') {
+                        $mediumSolved = $stat['count'];
+                    } elseif ($stat['difficulty'] === 'Hard') {
+                        $hardSolved = $stat['count'];
+                    }
+                }
+            }
+
+            // Get streak information
+            $streak = isset($userData['userCalendar']['streak']) ? $userData['userCalendar']['streak'] : 0;
+            $totalActiveDays = isset($userData['userCalendar']['totalActiveDays']) ? $userData['userCalendar']['totalActiveDays'] : 0;
+
+            // Get avatar URL
+            $avatarUrl = isset($userData['profile']['userAvatar']) ? $userData['profile']['userAvatar'] : '';
+
+            // Return as an array with all the information
+            return [
+                'total_solved' => $totalSolved,
+                'easy_solved' => $easySolved,
+                'medium_solved' => $mediumSolved,
+                'hard_solved' => $hardSolved,
+                'streak' => $streak,
+                'total_active_days' => $totalActiveDays,
+                'avatar_url' => $avatarUrl
+            ];
+        }
+
+        return "Error parsing data";
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
 }
 
 function getCodechefRating($username)
 {
-    // This is a placeholder - implement actual API call
-    return rand(1500, 2800); // Placeholder random rating
+    if (empty($username)) {
+        return "N/A";
+    }
+
+    $url = "https://competeapi.vercel.app/user/codechef/{$username}/";
+
+    try {
+        $response = @file_get_contents($url);
+
+        if ($response === false) {
+            return "Error";
+        }
+
+        $data = json_decode($response, true);
+
+        // Check if the response contains rating data
+        if (isset($data['rating_number'])) {
+            return $data['rating_number']; // Return just the rating value
+        }
+
+        return "No rating";
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
 }
 
 function getCodeforcesRating($username)
 {
-    // This is a placeholder - implement actual API call
-    return rand(1500, 2800); // Placeholder random rating
+    if (empty($username)) {
+        return "N/A";
+    }
+
+    $url = "https://competeapi.vercel.app/user/codeforces/{$username}/";
+
+    try {
+        $response = @file_get_contents($url);
+
+        if ($response === false) {
+            return "Error";
+        }
+
+        $data = json_decode($response, true);
+
+        // Check if the response is an array and contains user info in the first element
+        if (is_array($data) && !empty($data) && isset($data[0]['rating'])) {
+            // Extract additional information for display
+            $userInfo = [
+                'rating' => $data[0]['rating'],
+                'max_rating' => $data[0]['maxRating'],
+                'rank' => $data[0]['rank'],
+                'avatar' => $data[0]['avatar'],
+                'handle' => $data[0]['handle']
+            ];
+
+            return $userInfo;
+        }
+
+        return "No rating";
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
 }
 
 // Get ratings if IDs exist
-$leetcode_rating = !empty($leetcode_id) ? getLeetcodeRating($leetcode_id) : "N/A";
+$leetcode_data = !empty($leetcode_id) ? getLeetcodeRating($leetcode_id) : "N/A";
 $codechef_rating = !empty($codechef_id) ? getCodechefRating($codechef_id) : "N/A";
-$codeforces_rating = !empty($codeforces_id) ? getCodeforcesRating($codeforces_id) : "N/A";
+$codeforces_data = !empty($codeforces_id) ? getCodeforcesRating($codeforces_id) : "N/A";
+
+// Extract LeetCode rating (using total problems solved as a proxy for rating)
+$leetcode_rating = is_array($leetcode_data) ? $leetcode_data['total_solved'] : $leetcode_data;
+
+// Extract Codeforces rating
+$codeforces_rating = is_array($codeforces_data) ? $codeforces_data['rating'] : $codeforces_data;
+
+// Calculate total rating (if all are numeric)
 $total_rating = is_numeric($leetcode_rating) && is_numeric($codechef_rating) && is_numeric($codeforces_rating) ?
     ($leetcode_rating + $codechef_rating + $codeforces_rating) / 3 : "N/A";
 
@@ -96,10 +216,16 @@ usort($merged_future_contests, function ($a, $b) {
 
 <body>
     <!-- Sidebar -->
-     
+
     <div class="sidebar">
         <div class="logo">
-            <img src="https://picsum.photos/200/200" alt="Profile Picture">
+            <?php if (is_array($leetcode_data) && !empty($leetcode_data['avatar_url'])): ?>
+                <img src="<?php echo htmlspecialchars($leetcode_data['avatar_url']); ?>" alt="Profile Picture">
+            <?php elseif (is_array($codeforces_data) && !empty($codeforces_data['avatar']) && $codeforces_data['avatar'] !== 'https://userpic.codeforces.org/no-avatar.jpg'): ?>
+                <img src="<?php echo htmlspecialchars($codeforces_data['avatar']); ?>" alt="Profile Picture">
+            <?php else: ?>
+                <img src="https://picsum.photos/200/200" alt="Profile Picture">
+            <?php endif; ?>
             <span class="logo-text">CodeCase</span>
         </div>
 
@@ -139,7 +265,7 @@ usort($merged_future_contests, function ($a, $b) {
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                
+
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -166,7 +292,20 @@ usort($merged_future_contests, function ($a, $b) {
                     <i class="fas fa-code leetcode-icon"></i>
                     <span>LeetCode</span>
                 </div>
-                <div class="stat-value"><?php echo htmlspecialchars($leetcode_rating); ?></div>
+                <div class="stat-value"><?php echo htmlspecialchars($leetcode_rating); ?> Problems</div>
+                <div class="stat-details">
+                    <?php if (is_array($leetcode_data)): ?>
+                    <div class="problem-breakdown">
+                        <span class="easy">Easy: <?php echo $leetcode_data['easy_solved']; ?></span>
+                        <span class="medium">Medium: <?php echo $leetcode_data['medium_solved']; ?></span>
+                        <span class="hard">Hard: <?php echo $leetcode_data['hard_solved']; ?></span>
+                    </div>
+                    <div class="streak-info">
+                        <span>Streak: <?php echo $leetcode_data['streak']; ?> days</span>
+                        <span>Active: <?php echo $leetcode_data['total_active_days']; ?> days</span>
+                    </div>
+                    <?php endif; ?>
+                </div>
                 <div class="stat-change">
                     <span><?php echo htmlspecialchars($leetcode_id); ?></span>
                 </div>
@@ -177,7 +316,7 @@ usort($merged_future_contests, function ($a, $b) {
                     <i class="fas fa-utensils codechef-icon"></i>
                     <span>CodeChef</span>
                 </div>
-                <div class="stat-value"><?php echo htmlspecialchars($codechef_rating); ?></div>
+                <div class="stat-value"><?php echo htmlspecialchars($codechef_rating); ?> Rating</div>
                 <div class="stat-change">
                     <span><?php echo htmlspecialchars($codechef_id); ?></span>
                 </div>
@@ -188,7 +327,7 @@ usort($merged_future_contests, function ($a, $b) {
                     <i class="fas fa-laptop-code codeforces-icon"></i>
                     <span>Codeforces</span>
                 </div>
-                <div class="stat-value"><?php echo htmlspecialchars($codeforces_rating); ?></div>
+                <div class="stat-value"><?php echo htmlspecialchars($codeforces_rating); ?> Rating</div>
                 <div class="stat-change">
                     <span><?php echo htmlspecialchars($codeforces_id); ?></span>
                 </div>
@@ -222,8 +361,14 @@ usort($merged_future_contests, function ($a, $b) {
                             <div class="donut-label">Total</div>
                             <div class="donut-value">
                                 <?php
-                                // This is a placeholder - implement actual count
-                                echo rand(100, 500);
+                                // Use actual LeetCode data if available
+                                $totalCount = 0;
+                                if (is_array($leetcode_data)) {
+                                    $totalCount += $leetcode_data['total_solved'];
+                                }
+                                // Add other platforms' counts here when implemented
+
+                                echo $totalCount > 0 ? $totalCount : 'N/A';
                                 ?>
                             </div>
                         </div>
@@ -271,7 +416,7 @@ usort($merged_future_contests, function ($a, $b) {
         </div>
     </div>
 
-  
+
 
     <script>
         function confirmLogout() {
@@ -280,7 +425,7 @@ usort($merged_future_contests, function ($a, $b) {
                 window.location.href = 'logout.php';
             }
         }
-        
+
     </script>
 </body>
 

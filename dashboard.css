@@ -218,6 +218,50 @@ body {
     margin-right: 4px;
 }
 
+/* LeetCode Stats Styles */
+.stat-details {
+    margin: 10px 0;
+    font-size: 13px;
+}
+
+.problem-breakdown {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.problem-breakdown .easy {
+    color: #00b8a3; /* LeetCode easy color */
+}
+
+.problem-breakdown .medium {
+    color: #ffc01e; /* LeetCode medium color */
+}
+
+.problem-breakdown .hard {
+    color: #ff375f; /* LeetCode hard color */
+}
+
+.streak-info {
+    display: flex;
+    justify-content: space-between;
+    color: #a0aec0;
+    font-size: 12px;
+}
+
+/* Codeforces Stats Styles */
+.cf-rank, .cf-max-rating {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    color: #a0aec0;
+    font-size: 12px;
+}
+
+.cf-rank span {
+    color: #805ad5; /* Codeforces purple */
+}
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
