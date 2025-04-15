@@ -22,8 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,35 +43,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
             max-width: 600px;
             width: 100%;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        button {
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h1>Code<span style="color: #1a4eaf">Keep</span></h1>
-        <form action="profile.php" method="POST" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
-            <div class="input-form">
-                <input type="text" name="codechef_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">C</span><span style="transition-delay:50ms">o</span><span style="transition-delay:100ms">d</span><span style="transition-delay:150ms">e</span><span style="transition-delay:200ms">c</span><span style="transition-delay:250ms">h</span><span style="transition-delay:300ms">e</span><span style="transition-delay:350ms">f</span><span style="transition-delay:400ms"> </span><span style="transition-delay:450ms">I</span><span style="transition-delay:500ms">D</span>
-                </label>
+        <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; width: 100%;">
+            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
+            <h1><span style="text-align: left;">Connect Profiles</span></h1>
+        </div>
+        <form action="profile.php" method="POST" style="width: 100%;">
+            <div class="form-group">
+                <label for="codechef">CodeChef ID</label>
+                <input type="text" id="codechef" name="codechef_id" placeholder="CodeChef ID" required>
             </div>
-            <div class="input-form">
-                <input type="text" name="codeforces_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">C</span><span style="transition-delay:50ms">o</span><span style="transition-delay:100ms">d</span><span style="transition-delay:150ms">e</span><span style="transition-delay:200ms">f</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">r</span><span style="transition-delay:350ms">c</span><span style="transition-delay:400ms">e</span><span style="transition-delay:450ms">s</span><span style="transition-delay:500ms"> </span><span style="transition-delay:550ms">I</span><span style="transition-delay:600ms">D</span>
-                </label>
+            <div class="form-group">
+                <label for="codeforces">Codeforces ID</label>
+                <input type="text" id="codeforces" name="codeforces_id" placeholder="Codeforces ID" required>
             </div>
-            <div class="input-form">
-                <input type="text" name="leetcode_id" required>
-                <label style="color: white;">
-                    <span style="transition-delay:0ms">L</span><span style="transition-delay:50ms">e</span><span style="transition-delay:100ms">e</span><span style="transition-delay:150ms">t</span><span style="transition-delay:200ms">c</span><span style="transition-delay:250ms">o</span><span style="transition-delay:300ms">d</span><span style="transition-delay:350ms">e</span><span style="transition-delay:400ms"> </span><span style="transition-delay:450ms">I</span><span style="transition-delay:500ms">D</span>
-                </label>
+            <div class="form-group" style="padding-bottom: 10px">
+                <label for="leetcode">LeetCode ID</label>
+                <input type="text" id="leetcode" name="leetcode_id" placeholder="LeetCode ID" required>
             </div>
-            <button class="button" align="center">
-                Connect
-            </button>
+            <button type="submit" style="padding-bottom: 10px">Connect Profiles</button>
         </form>
+        <div style="display: flex; justify-content: center; margin-top: 10px; gap: 5px;">
+            <a href="dashboard.php">Back to Dashboard</a>
+        </div>
     </div>
 </body>
 </html>
