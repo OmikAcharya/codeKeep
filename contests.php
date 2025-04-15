@@ -177,144 +177,337 @@ if ($saved_filter) {
     <style>
         .filter-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .filter-btn {
-            padding: 8px 16px;
-            background-color: #1e2130;
+            padding: 10px 18px;
+            background-color: rgba(30, 33, 48, 0.8);
             border: 1px solid #2d3748;
-            color: #a0aec0;
-            border-radius: 4px;
+            color: #cbd5e0;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .filter-btn:hover:before {
+            left: 100%;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background-color: #252a3d;
         }
 
         .filter-btn.active {
-            background-color: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
-            border-color: #2563eb;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .contests-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
         }
 
         .contest-card {
-            background-color: #1e2130;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: linear-gradient(145deg, #1e2130, #1a1d2a);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
             border-left: 4px solid;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .contest-card:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30%;
+            height: 5px;
+            background: inherit;
+            opacity: 0.3;
+            border-radius: 0 0 0 10px;
         }
 
         .codechef {
             border-left-color: #3182ce;
+            box-shadow: 0 4px 20px rgba(49, 130, 206, 0.1);
         }
 
         .codeforces {
             border-left-color: #805ad5;
+            box-shadow: 0 4px 20px rgba(128, 90, 213, 0.1);
         }
 
         .leetcode {
             border-left-color: #f59e0b;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
         }
 
         .contest-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .contest-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
+            color: #f7fafc;
+            margin-right: 10px;
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            flex: 1;
         }
 
         .contest-platform {
             font-size: 14px;
-            padding: 4px 8px;
-            border-radius: 4px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
             color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
         }
 
         .platform-codechef {
-            background-color: #3182ce;
+            background: linear-gradient(135deg, #3182ce, #2c5282);
         }
 
         .platform-codeforces {
-            background-color: #805ad5;
+            background: linear-gradient(135deg, #805ad5, #6b46c1);
         }
 
         .platform-leetcode {
-            background-color: #f59e0b;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         .contest-details {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .detail-item {
             display: flex;
             flex-direction: column;
+            padding: 8px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .detail-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
         }
 
         .detail-label {
             font-size: 12px;
             color: #a0aec0;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
         }
 
         .detail-value {
             font-size: 14px;
+            color: #e2e8f0;
+            font-weight: 500;
+            word-break: break-word;
         }
 
         .contest-actions {
             display: flex;
             justify-content: flex-end;
-            margin-top: 15px;
+            margin-top: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .contest-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            font-weight: 500;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
         }
 
         .contest-btn:hover {
             background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .contest-btn:active {
+            transform: translateY(0);
         }
 
         .save-btn {
             background-color: transparent;
-            border: 1px solid #2d3748;
-            color: #a0aec0;
+            border: 2px solid #4b5563;
+            color: #cbd5e0;
+            box-shadow: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .save-btn.saved {
-            background-color: #48bb78;
-            color: white;
-            border-color: #48bb78;
+        .save-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .save-btn:hover:before {
+            left: 100%;
         }
 
         .save-btn:hover {
-            background-color: #2d3748;
+            background-color: #374151;
+            border-color: #6b7280;
             color: white;
+            box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
+        }
+
+        .save-btn.saved {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .save-btn.saved:hover {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        /* Add platform icons */
+        .platform-codechef:before {
+            content: '🍽️';
+            margin-right: 5px;
+        }
+
+        .platform-codeforces:before {
+            content: '🏆';
+            margin-right: 5px;
+        }
+
+        .platform-leetcode:before {
+            content: '💻';
+            margin-right: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .contests-container {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
+            .contests-container {
+                grid-template-columns: 1fr;
+            }
+            
             .contest-details {
                 grid-template-columns: 1fr;
             }
+            
+            .filter-container {
+                overflow-x: auto;
+                padding-bottom: 10px;
+                justify-content: flex-start;
+            }
+            
+            .filter-btn {
+                flex-shrink: 0;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Main heading animations */
+        h1 {
+            background: linear-gradient(135deg, #f7fafc, #cbd5e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 0.5em;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, #3182ce, #2c5282);
+            border-radius: 2px;
         }
     </style>
 </head>
