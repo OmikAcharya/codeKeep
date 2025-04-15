@@ -589,7 +589,7 @@ $category_stmt->close();
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeCase</span>
         </div>
 
         <div class="nav-menu">
