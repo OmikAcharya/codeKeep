@@ -624,10 +624,7 @@ $filtered_problems = $problems;
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
-            <a href="statistics.php" class="nav-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>Statistics</span>
-            </a>
+            
         </div>
 
         <div class="user-profile">
@@ -636,7 +633,7 @@ $filtered_problems = $problems;
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
