@@ -387,3 +387,35 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Configure Profiles Button Styles */
+.configure-profiles {
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+    padding: 0 20px 15px 20px;
+}
+
+.configure-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.configure-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.configure-btn i {
+    margin-right: 8px;
+}

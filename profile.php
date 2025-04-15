@@ -5,21 +5,44 @@ if (!isset($_SESSION['email'])) {
     die("Session error: User not logged in.");
 }
 
+// Check if user has existing profile data
+$userEmail = $_SESSION['email'];
+$existingProfile = null;
 
+$checkProfile = $conn->prepare("SELECT codechef_id, codeforces_id, leetcode_id FROM profile WHERE Uemail = ?");
+$checkProfile->bind_param("s", $userEmail);
+$checkProfile->execute();
+$result = $checkProfile->get_result();
+
+if ($result->num_rows > 0) {
+    $existingProfile = $result->fetch_assoc();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $codechef_id = $_POST['codechef_id'] ?? '';
     $codeforces_id = $_POST['codeforces_id'] ?? '';
     $leetcode_id = $_POST['leetcode_id'] ?? '';
 
-    $stmt = $conn->prepare("INSERT INTO profile(Uemail, codechef_id, codeforces_id, leetcode_id) VALUES(?,?,?,?)");
-    $stmt->bind_param("ssss", $_SESSION['email'], $codechef_id, $codeforces_id, $leetcode_id);
+    if ($existingProfile) {
+        // Update existing profile
+        $stmt = $conn->prepare("UPDATE profile SET codechef_id = ?, codeforces_id = ?, leetcode_id = ? WHERE Uemail = ?");
+        $stmt->bind_param("ssss", $codechef_id, $codeforces_id, $leetcode_id, $userEmail);
+    } else {
+        // Insert new profile
+        $stmt = $conn->prepare("INSERT INTO profile(Uemail, codechef_id, codeforces_id, leetcode_id) VALUES(?,?,?,?)");
+        $stmt->bind_param("ssss", $userEmail, $codechef_id, $codeforces_id, $leetcode_id);
+    }
     $stmt->execute();
 
-    echo "Data inserted successfully!";
+    echo "Profile updated successfully!";
     header("Location: dashboard.php");
     exit;
 }
+
+// Initialize variables with empty values or existing profile values
+$codechef_value = $existingProfile ? $existingProfile['codechef_id'] : '';
+$codeforces_value = $existingProfile ? $existingProfile['codeforces_id'] : '';
+$leetcode_value = $existingProfile ? $existingProfile['leetcode_id'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -62,17 +85,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form action="profile.php" method="POST" style="width: 100%;">
             <div class="form-group">
                 <label for="codechef">CodeChef ID</label>
-                <input type="text" id="codechef" name="codechef_id" placeholder="CodeChef ID" required>
+                <input type="text" id="codechef" name="codechef_id" placeholder="CodeChef ID" value="<?php echo htmlspecialchars($codechef_value); ?>" required>
             </div>
             <div class="form-group">
                 <label for="codeforces">Codeforces ID</label>
-                <input type="text" id="codeforces" name="codeforces_id" placeholder="Codeforces ID" required>
+                <input type="text" id="codeforces" name="codeforces_id" placeholder="Codeforces ID" value="<?php echo htmlspecialchars($codeforces_value); ?>" required>
             </div>
             <div class="form-group" style="padding-bottom: 10px">
                 <label for="leetcode">LeetCode ID</label>
-                <input type="text" id="leetcode" name="leetcode_id" placeholder="LeetCode ID" required>
+                <input type="text" id="leetcode" name="leetcode_id" placeholder="LeetCode ID" value="<?php echo htmlspecialchars($leetcode_value); ?>" required>
             </div>
-            <button type="submit" style="padding-bottom: 10px">Connect Profiles</button>
+            <button type="submit" style="padding-bottom: 10px">
+                <?php echo $existingProfile ? 'Update Profiles' : 'Connect Profiles'; ?>
+            </button>
         </form>
         <div style="display: flex; justify-content: center; margin-top: 10px; gap: 5px;">
             <a href="dashboard.php">Back to Dashboard</a>

@@ -192,6 +192,7 @@ $category_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -255,12 +256,14 @@ $category_stmt->close();
             background-color: #171923;
             border: 1px solid #2d3748;
             border-radius: 4px;
-            color: white;
+            color: #e2e8f0;
+            /* Light gray for better visibility */
             font-size: 14px;
         }
 
         .search-input::placeholder {
             color: #a0aec0;
+            /* Slightly darker gray for placeholder text */
         }
 
         .category-filter {
@@ -269,7 +272,8 @@ $category_stmt->close();
 
         .category-label {
             font-size: 14px;
-            color: #a0aec0;
+            color: #e2e8f0;
+            /* Light gray for better visibility */
             margin-bottom: 10px;
         }
 
@@ -287,14 +291,17 @@ $category_stmt->close();
             display: flex;
             justify-content: space-between;
             align-items: center;
+            text-decoration: none;
+            color: #e2e8f0;
+            /* Light gray for better visibility */
         }
 
-        .category-item:hover, .category-item.active {
-            background-color: #2d3748;
-        }
-
+        .category-item:hover,
         .category-item.active {
-            color: #2563eb;
+            background-color: #2d3748;
+            text-decoration: none;
+            color: #ffffff;
+            /* White text on hover or active */
         }
 
         .category-count {
@@ -321,7 +328,8 @@ $category_stmt->close();
             border-left: 3px solid transparent;
         }
 
-        .note-item:hover, .note-item.active {
+        .note-item:hover,
+        .note-item.active {
             background-color: #2d3748;
         }
 
@@ -335,11 +343,14 @@ $category_stmt->close();
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #e2e8f0;
+            /* Light gray for better visibility */
         }
 
         .note-item-preview {
             font-size: 12px;
-            color: #a0aec0;
+            color: #cbd5e0;
+            /* Slightly lighter gray for preview text */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -347,7 +358,8 @@ $category_stmt->close();
 
         .note-item-date {
             font-size: 11px;
-            color: #718096;
+            color: #a0aec0;
+            /* Slightly darker gray for date text */
             margin-top: 5px;
         }
 
@@ -372,6 +384,8 @@ $category_stmt->close();
         .note-content-title {
             font-size: 24px;
             font-weight: 600;
+            color: #ffffff;
+            /* White for better visibility */
         }
 
         .note-content-actions {
@@ -406,7 +420,8 @@ $category_stmt->close();
             justify-content: space-between;
             padding-top: 15px;
             border-top: 1px solid #2d3748;
-            color: #a0aec0;
+            color: #e2e8f0;
+            /* Light gray for better visibility */
             font-size: 12px;
         }
 
@@ -568,12 +583,13 @@ $category_stmt->close();
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeCase</span>
         </div>
 
         <div class="nav-menu">
@@ -600,6 +616,13 @@ $category_stmt->close();
             
         </div>
 
+        <div class="configure-profiles">
+            <a href="profile.php" class="configure-btn">
+                <i class="fas fa-user-cog"></i>
+                <span>Configure Profiles</span>
+            </a>
+        </div>
+
         <div class="user-profile">
             <div class="user-avatar">
                 <?php echo substr($name, 0, 1); ?>
@@ -620,7 +643,7 @@ $category_stmt->close();
     flex-direction: column;
     border-right: 1px solid #2d3748;">
 
-     </div>
+    </div>
     <!-- Main Content -->
     <div class="main-content">
         <h1>Notes</h1>
@@ -651,9 +674,9 @@ $category_stmt->close();
 
                         <?php foreach ($categories as $category): ?>
                             <?php
-                                $count = count(array_filter($notes, function($note) use ($category) {
-                                    return $note['category'] === $category;
-                                }));
+                            $count = count(array_filter($notes, function ($note) use ($category) {
+                                return $note['category'] === $category;
+                            }));
                             ?>
                             <a href="?category=<?php echo urlencode(strtolower($category)); ?>" class="category-item <?php echo strtolower($category_filter) === strtolower($category) ? 'active' : ''; ?>">
                                 <span><?php echo htmlspecialchars($category); ?></span>
@@ -705,10 +728,10 @@ $category_stmt->close();
 
                     <div class="note-content-body">
                         <?php
-                            $content = $filtered_notes[0]['content'];
-                            // Convert markdown-style code blocks to HTML
-                            $content = preg_replace('/```(.*?)```/s', '<pre><code>$1</code></pre>', $content);
-                            echo nl2br(htmlspecialchars_decode($content));
+                        $content = $filtered_notes[0]['content'];
+                        // Convert markdown-style code blocks to HTML
+                        $content = preg_replace('/```(.*?)```/s', '<pre><code>$1</code></pre>', $content);
+                        echo nl2br(htmlspecialchars_decode($content));
                         ?>
                     </div>
 
@@ -723,7 +746,19 @@ $category_stmt->close();
             <div class="note-editor" id="noteEditor">
                 <div class="note-editor-header">
                     <input type="text" class="note-editor-title" id="editTitle" placeholder="Note Title">
-                    <input type="text" class="note-editor-category" id="editCategory" placeholder="Category (e.g., Algorithms, Code Snippets)">
+
+                    <!-- Category Dropdown -->
+                    <select id="editCategoryDropdown" class="note-editor-category" onchange="handleCategoryChange()">
+                        <option value="">Select a category</option>
+                        <option value="algorithms">Algorithms</option>
+                        <option value="code-snippets">Code Snippets</option>
+                        <option value="data-structures">Data Structures</option>
+                        <option value="projects">Projects</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <!-- Category Input (hidden by default) -->
+                    <input type="text" class="note-editor-category" id="editCategoryInput" placeholder="Enter custom category" style="display: none;">
                 </div>
 
                 <div class="note-editor-body">
@@ -823,10 +858,14 @@ $category_stmt->close();
             currentNoteId = null;
             isNewNote = true;
 
-            // Clear editor
+            // Clear editor fields
             document.getElementById('editTitle').value = '';
-            document.getElementById('editCategory').value = '';
+            document.getElementById('editCategoryInput').value = '';
             document.getElementById('editContent').value = '';
+
+            // Show the dropdown and hide the input field
+            document.getElementById('editCategoryDropdown').style.display = 'block';
+            document.getElementById('editCategoryInput').style.display = 'none';
 
             // Show editor, hide content
             document.getElementById('noteContent').style.display = 'none';
@@ -836,8 +875,12 @@ $category_stmt->close();
         function saveNote() {
             // Get values from editor
             const title = document.getElementById('editTitle').value.trim();
-            const category = document.getElementById('editCategory').value.trim();
+            const categoryDropdown = document.getElementById('editCategoryDropdown');
+            const categoryInput = document.getElementById('editCategoryInput');
             const content = document.getElementById('editContent').value.trim();
+
+            // Determine the category value (use input if "Other" is selected, otherwise use dropdown)
+            const category = categoryDropdown.value === 'other' ? categoryInput.value.trim() : categoryDropdown.value.trim();
 
             // Validate
             if (!title || !category || !content) {
@@ -861,36 +904,6 @@ $category_stmt->close();
 
             // Send AJAX request
             fetch('notes.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // Reload the page to show updated notes
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while saving the note.');
-            });
-        }
-
-        function deleteNote(noteId) {
-            const confirmDelete = confirm('Are you sure you want to delete this note?');
-
-            if (confirmDelete) {
-                // Create form data
-                const formData = new FormData();
-                formData.append('action', 'delete_note');
-                formData.append('id', noteId);
-
-                // Send AJAX request
-                fetch('notes.php', {
                     method: 'POST',
                     body: formData
                 })
@@ -906,8 +919,38 @@ $category_stmt->close();
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while deleting the note.');
+                    alert('An error occurred while saving the note.');
                 });
+        }
+
+        function deleteNote(noteId) {
+            const confirmDelete = confirm('Are you sure you want to delete this note?');
+
+            if (confirmDelete) {
+                // Create form data
+                const formData = new FormData();
+                formData.append('action', 'delete_note');
+                formData.append('id', noteId);
+
+                // Send AJAX request
+                fetch('notes.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            // Reload the page to show updated notes
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the note.');
+                    });
             }
         }
 
@@ -938,6 +981,19 @@ $category_stmt->close();
             }
         }
 
+        function handleCategoryChange() {
+            const categoryDropdown = document.getElementById('editCategoryDropdown');
+            const categoryInput = document.getElementById('editCategoryInput');
+
+            if (categoryDropdown.value === 'other') {
+                categoryInput.style.display = 'block'; // Show input field
+                categoryInput.value = ''; // Clear any previous value
+            } else {
+                categoryInput.style.display = 'none'; // Hide input field
+                categoryInput.value = categoryDropdown.value; // Set input value to selected category
+            }
+        }
+
         // Search functionality
         document.getElementById('noteSearch').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
@@ -956,4 +1012,5 @@ $category_stmt->close();
         });
     </script>
 </body>
+
 </html>

@@ -214,7 +214,7 @@ if ($saved_filter) {
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeCase</span>
         </div>
 
         <div class="nav-menu">
@@ -235,8 +235,16 @@ if ($saved_filter) {
                 <span>Problems</span>
             </a>
             <a href="notes.php" class="nav-item">
-                <i class="fas fa-sticky-note"></i>
+           
+            <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
+            </a>
+        </div>
+
+        <div class="configure-profiles">
+            <a href="profile.php" class="configure-btn">
+                <i class="fas fa-user-cog"></i>
+                <span>Configure Profiles</span>
             </a>
         </div>
 
