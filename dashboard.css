@@ -145,12 +145,6 @@ body {
     overflow-y: auto;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 20px;
-}
 
 .stat-card {
     background-color: #1e2130;
@@ -340,12 +334,10 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: conic-gradient(
-        #3182ce 0% 25%,
-        #48bb78 25% 55%,
-        #805ad5 55% 75%,
-        #f6ad55 75% 100%
-    );
+    background: conic-gradient(#3182ce 0% 25%,
+            #48bb78 25% 55%,
+            #805ad5 55% 75%,
+            #f6ad55 75% 100%);
 }
 
 .donut-label {
@@ -378,16 +370,16 @@ body {
     body {
         flex-direction: column;
     }
-    
+
     .sidebar {
         width: 100%;
         height: auto;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
