@@ -25,17 +25,20 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
 }
 
 // Fetch ratings (you would need to implement these functions)
-function getLeetcodeRating($username) {
+function getLeetcodeRating($username)
+{
     // This is a placeholder - implement actual API call
     return rand(1500, 2800); // Placeholder random rating
 }
 
-function getCodechefRating($username) {
+function getCodechefRating($username)
+{
     // This is a placeholder - implement actual API call
     return rand(1500, 2800); // Placeholder random rating
 }
 
-function getCodeforcesRating($username) {
+function getCodeforcesRating($username)
+{
     // This is a placeholder - implement actual API call
     return rand(1500, 2800); // Placeholder random rating
 }
@@ -45,7 +48,7 @@ $leetcode_rating = !empty($leetcode_id) ? getLeetcodeRating($leetcode_id) : "N/A
 $codechef_rating = !empty($codechef_id) ? getCodechefRating($codechef_id) : "N/A";
 $codeforces_rating = !empty($codeforces_id) ? getCodeforcesRating($codeforces_id) : "N/A";
 $total_rating = is_numeric($leetcode_rating) && is_numeric($codechef_rating) && is_numeric($codeforces_rating) ?
-                ($leetcode_rating + $codechef_rating + $codeforces_rating) / 3 : "N/A";
+    ($leetcode_rating + $codechef_rating + $codeforces_rating) / 3 : "N/A";
 
 // Fetch contests
 $codechef_url = 'https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=asc&offset=0&mode=all';
@@ -82,6 +85,7 @@ usort($merged_future_contests, function ($a, $b) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,8 +93,10 @@ usort($merged_future_contests, function ($a, $b) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./dashboard.css">
 </head>
+
 <body>
     <!-- Sidebar -->
+     
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
@@ -119,12 +125,34 @@ usort($merged_future_contests, function ($a, $b) {
                 <span>Notes</span>
             </a>
         </div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <?php echo substr($name, 0, 1); ?>
+            </div>
+            <div class="user-info">
+                <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
+                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+            </div>
+            <button class="logout-btn" onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
     </div>
+    <div class="extra" style="width: 220px;
+    background-color: #171923;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2d3748;">
 
+     </div>
     <!-- Main Content -->
     <div class="main-content">
         <!-- Stats Cards -->
-        <div class="stats-grid">
+        <div class="stats-grid" style="display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;">
             <div class="stat-card">
                 <div class="stat-title">
                     <i class="fas fa-code leetcode-icon"></i>
@@ -175,7 +203,7 @@ usort($merged_future_contests, function ($a, $b) {
                 </div>
 
                 <!-- Total Count Card -->
-                <div class="dashboard-card">
+                <div class="dashboard-card" style="height:50vh">
                     <div class="card-header">
                         <div class="card-title">Total Solved Problems</div>
                     </div>
@@ -186,8 +214,8 @@ usort($merged_future_contests, function ($a, $b) {
                             <div class="donut-label">Total</div>
                             <div class="donut-value">
                                 <?php
-                                    // This is a placeholder - implement actual count
-                                    echo rand(100, 500);
+                                // This is a placeholder - implement actual count
+                                echo rand(100, 500);
                                 ?>
                             </div>
                         </div>
@@ -235,10 +263,7 @@ usort($merged_future_contests, function ($a, $b) {
         </div>
     </div>
 
-    <!-- Database Setup Link (for admin/development purposes) -->
-    <div style="text-align: center; margin-top: 20px; padding: 10px; background-color: #1e2130; border-radius: 5px;">
-        <a href="setup_db.php" style="color: #a0aec0; text-decoration: none; font-size: 12px;">Initialize/Update Database</a>
-    </div>
+  
 
     <script>
         function confirmLogout() {
@@ -247,6 +272,8 @@ usort($merged_future_contests, function ($a, $b) {
                 window.location.href = 'logout.php';
             }
         }
+        
     </script>
 </body>
+
 </html>
