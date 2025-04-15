@@ -612,7 +612,14 @@ $category_stmt->close();
             </button>
         </div>
     </div>
+    <div class="extra" style="width: 220px;
+    background-color: #171923;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2d3748;">
 
+     </div>
     <!-- Main Content -->
     <div class="main-content">
         <h1>Notes</h1>
