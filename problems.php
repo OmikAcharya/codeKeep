@@ -373,12 +373,12 @@ $filtered_problems = $problems;
     <div class="main-content">
         <div class="header-with-button">
             <div>
+                <a href="dashboard.php" class="back-to-dashboard-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
                 <h1>Coding Problems</h1>
                 <p>Browse, solve, and bookmark coding problems from various platforms.</p>
             </div>
-            <button class="add-problem-btn" onclick="showAddProblemForm()">
-                <i class="fas fa-plus"></i> Add New Problem
-            </button>
         </div>
 
         <div class="search-container">
@@ -725,114 +725,6 @@ $filtered_problems = $problems;
                 `;
                 document.head.appendChild(style);
             }
-        }
-
-        function closeModal(modal) {
-            document.body.removeChild(modal);
-        }
-
-        function showAddProblemForm() {
-            // Show problem form in a modal
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-plus-circle"></i> Add New Problem</h3>
-                        <button class="close-btn" onclick="closeModal(this.parentNode.parentNode.parentNode)">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="problemForm">
-                            <div class="form-group">
-                                <label for="title"><i class="fas fa-heading"></i> Problem Title*</label>
-                                <input type="text" id="title" name="title" class="form-control" placeholder="Enter problem title" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="platform"><i class="fas fa-globe"></i> Platform*</label>
-                                <select id="platform" name="platform" class="form-control" required>
-                                    <option value="LeetCode">LeetCode</option>
-                                    <option value="CodeChef">CodeChef</option>
-                                    <option value="Codeforces">Codeforces</option>
-                                    <option value="other">Other (Custom)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="difficulty"><i class="fas fa-chart-line"></i> Difficulty*</label>
-                                <select id="difficulty" name="difficulty" class="form-control" required>
-                                    <option value="Easy">Easy</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="Hard">Hard</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="problem_url"><i class="fas fa-link"></i> Problem URL*</label>
-                                <input type="url" id="problem_url" name="problem_url" class="form-control" placeholder="https://..." required>
-                            </div>
-                            <div class="form-group">
-                                <label for="description"><i class="fas fa-align-left"></i> Problem Description*</label>
-                                <textarea id="description" name="description" class="form-control" rows="5" placeholder="Describe the problem..." required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="tags"><i class="fas fa-tags"></i> Tags (comma separated)</label>
-                                <input type="text" id="tags" name="tags" class="form-control" placeholder="e.g., Array, Dynamic Programming, Math">
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="cancel-btn" onclick="closeModal(this.parentNode.parentNode.parentNode.parentNode.parentNode)">
-                                    <i class="fas fa-times"></i> Cancel
-                                </button>
-                                <button type="button" class="submit-btn" onclick="submitProblem()">
-                                    <i class="fas fa-save"></i> Add Problem
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        function submitProblem() {
-            // Get form data
-            const title = document.getElementById('title').value;
-            const platform = document.getElementById('platform').value;
-            const difficulty = document.getElementById('difficulty').value;
-            const problem_url = document.getElementById('problem_url').value;
-            const description = document.getElementById('description').value;
-            const tags = document.getElementById('tags').value;
-
-            if (!title || !platform || !difficulty || !problem_url || !description) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'add_problem');
-            formData.append('title', title);
-            formData.append('platform', platform);
-            formData.append('difficulty', difficulty);
-            formData.append('problem_url', problem_url);
-            formData.append('description', description);
-            formData.append('tags', tags);
-
-            fetch('problems.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    const modal = document.querySelector('.modal');
-                    document.body.removeChild(modal);
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding the problem.');
-            });
         }
 
         function submitSolution(problemId) {

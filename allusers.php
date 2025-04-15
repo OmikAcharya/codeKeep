@@ -130,6 +130,27 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
             text-align: center;
             padding: 20px;
         }
+
+        .back-to-dashboard-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -161,10 +182,6 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
-            <a href="statistics.php" class="nav-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>Statistics</span>
-            </a>
         </div>
 
         <div class="configure-profiles">
@@ -180,7 +197,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -195,6 +212,9 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
         <div class="header-with-icon">
             <i class="fas fa-trophy"></i>
             <div>
+                <a href="dashboard.php" class="back-to-dashboard-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
                 <h1>Leaderboard</h1>
                 <p>Users ranked by total problems solved across platforms</p>
             </div>
