@@ -682,15 +682,6 @@ $category_stmt->close();
     <div class="main-content">
         <h1>Notes</h1>
         <p>Store and organize your programming notes, algorithms, and code snippets.</p>
-<<<<<<< HEAD
-        <a href="dashboard.php" class="back-to-dashboard-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-        <div class="notes-container">
-=======
-
-        <div class="notes-container" style="padding: 20px 0;">
->>>>>>> ffdde78614fdb118a1b920e75bc9a02e43e211eb
             <!-- Notes Sidebar -->
             <div class="notes-sidebar">
                 <div class="notes-header">
