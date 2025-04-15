@@ -24,7 +24,6 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     }
 }
 
-// Handle AJAX requests for saving contests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_contest') {
     if (!isset($_SESSION['email'])) {
         echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -43,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 
-    // Check if contest is already saved
     $check_stmt = $conn->prepare("SELECT id FROM saved_contests WHERE user_email = ? AND platform = ? AND contest_code = ?");
     $check_stmt->bind_param("sss", $user_email, $platform, $contest_code);
     $check_stmt->execute();
@@ -56,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $check_stmt->close();
 
-    // Save the contest
     $stmt = $conn->prepare("INSERT INTO saved_contests (user_email, platform, contest_name, contest_code, contest_start_date, contest_end_date) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $user_email, $platform, $contest_name, $contest_code, $contest_start_date, $contest_end_date);
 
@@ -70,11 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// Fetch contests using the new API endpoints
+// Set timezone to IST
+date_default_timezone_set('Asia/Kolkata');
+
+// Function to format date in IST
+function formatDateIST($timestamp) {
+    return date('d M Y H:i:s', $timestamp) . ' IST';
+}
+
 $upcoming_contests_url = 'https://competeapi.vercel.app/contests/upcoming/';
 $leetcode_contests_url = 'https://competeapi.vercel.app/contests/leetcode/';
 
-// Fetch upcoming contests from CodeChef and Codeforces
 try {
     $upcoming_response = file_get_contents($upcoming_contests_url);
     $upcoming_data = json_decode($upcoming_response, true);
@@ -82,7 +85,6 @@ try {
     $upcoming_data = [];
 }
 
-// Fetch LeetCode contests
 try {
     $leetcode_response = file_get_contents($leetcode_contests_url);
     $leetcode_data = json_decode($leetcode_response, true);
@@ -90,27 +92,23 @@ try {
     $leetcode_data = null;
 }
 
-// Process upcoming contests from CodeChef and Codeforces
 $formatted_codechef_contests = [];
 $cf_future_contests = [];
 
 if (!empty($upcoming_data)) {
     foreach ($upcoming_data as $contest) {
-        // Convert milliseconds to seconds for timestamps
         $start_time_seconds = $contest['startTime'] / 1000;
         $end_time_seconds = $contest['endTime'] / 1000;
-        $duration_hours = $contest['duration'] / (1000 * 60 * 60); // Convert milliseconds to hours
-
-        // Extract contest code from URL
+        $duration_hours = $contest['duration'] / (1000 * 60 * 60);
         $url_parts = explode('/', rtrim($contest['url'], '/'));
         $contest_code = end($url_parts);
 
         $contest_data = [
-            'platform' => ucfirst($contest['site']), // Capitalize first letter
+            'platform' => ucfirst($contest['site']),
             'contest_name' => $contest['title'],
             'contest_code' => $contest_code,
-            'contest_start_date' => date('d M Y H:i:s', $start_time_seconds),
-            'contest_end_date' => date('d M Y H:i:s', $end_time_seconds),
+            'contest_start_date' => formatDateIST($start_time_seconds),
+            'contest_end_date' => formatDateIST($end_time_seconds),
             'duration' => round($duration_hours, 2) . ' hours',
             'url' => $contest['url']
         ];
@@ -123,7 +121,7 @@ if (!empty($upcoming_data)) {
     }
 }
 
-// Process LeetCode contests
+
 $leetcode_contests = [];
 if ($leetcode_data && isset($leetcode_data['data']) && isset($leetcode_data['data']['topTwoContests'])) {
     foreach ($leetcode_data['data']['topTwoContests'] as $contest) {
@@ -135,15 +133,14 @@ if ($leetcode_data && isset($leetcode_data['data']) && isset($leetcode_data['dat
             'platform' => 'LeetCode',
             'contest_name' => $contest['title'],
             'contest_code' => str_replace(' ', '-', strtolower($contest['title'])),
-            'contest_start_date' => date('d M Y H:i:s', $start_time_seconds),
-            'contest_end_date' => date('d M Y H:i:s', $end_time_seconds),
+            'contest_start_date' => formatDateIST($start_time_seconds),
+            'contest_end_date' => formatDateIST($end_time_seconds),
             'duration' => round($duration_hours, 2) . ' hours',
             'url' => 'https://leetcode.com/contest/'
         ];
     }
 }
 
-// Get saved contests
 $saved_contests_stmt = $conn->prepare("SELECT platform, contest_code FROM saved_contests WHERE user_email = ?");
 $saved_contests_stmt->bind_param("s", $email);
 $saved_contests_stmt->execute();
@@ -155,22 +152,18 @@ while ($row = $saved_contests_result->fetch_assoc()) {
 }
 $saved_contests_stmt->close();
 
-// Merge all contests and mark saved ones
 $all_contests = array_merge($formatted_codechef_contests, $cf_future_contests, $leetcode_contests);
 
-// Mark saved contests
 foreach ($all_contests as &$contest) {
     $contest_key = $contest['platform'] . '-' . $contest['contest_code'];
     $contest['saved'] = in_array($contest_key, $saved_contest_keys);
 }
-unset($contest); // Break the reference
+unset($contest);
 
-// Sort by start date
 usort($all_contests, function ($a, $b) {
     return strtotime($a['contest_start_date']) - strtotime($b['contest_start_date']);
 });
 
-// Filter contests if needed
 $platform_filter = $_GET['platform'] ?? 'all';
 $saved_filter = isset($_GET['saved']) && $_GET['saved'] === '1';
 $filtered_contests = $all_contests;
@@ -196,6 +189,7 @@ if ($saved_filter) {
     <title>Contests - CodeKeep</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="dashboard.css">
+<<<<<<< HEAD
     <style>
         .filter-container {
             display: flex;
@@ -575,6 +569,9 @@ if ($saved_filter) {
             font-size: 16px;
         }
     </style>
+=======
+    <link rel="stylesheet" href="contests.css">
+>>>>>>> ffdde78614fdb118a1b920e75bc9a02e43e211eb
 </head>
 
 <body>
@@ -622,7 +619,7 @@ if ($saved_filter) {
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -648,13 +645,12 @@ if ($saved_filter) {
         <h1>Upcoming Contests</h1>
         <p>Stay updated with all the upcoming competitive programming contests.</p>
 
-        <div class="filter-container">
+        <div class="filter-container" style="padding: 20px 0;">
             <a href="?platform=all<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'all' ? 'active' : ''; ?>">All Platforms</a>
             <a href="?platform=codechef<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codechef' ? 'active' : ''; ?>">CodeChef</a>
             <a href="?platform=codeforces<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codeforces' ? 'active' : ''; ?>">Codeforces</a>
             <a href="?platform=leetcode<?php echo $saved_filter ? '&saved=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'leetcode' ? 'active' : ''; ?>">LeetCode</a>
             <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter . '&' : ''; ?>saved=1" class="filter-btn <?php echo $saved_filter ? 'active' : ''; ?>">Saved Only</a>
-            <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter : ''; ?>" class="filter-btn <?php echo !$saved_filter ? 'active' : ''; ?>">All Contests</a>
         </div>
 
         <div class="contests-container">
@@ -679,8 +675,10 @@ if ($saved_filter) {
                             </div>
 
                             <div class="detail-item">
-                                <div class="detail-label">Start Time</div>
-                                <div class="detail-value"><?php echo htmlspecialchars($contest['contest_start_date']); ?></div>
+                                <div class="detail-label ist-label">Start Time (IST)</div>
+                                <div class="detail-value time-ist">
+                                    <i class="fas fa-clock"></i> <?php echo htmlspecialchars($contest['contest_start_date']); ?>
+                                </div>
                             </div>
 
                             <div class="detail-item">

@@ -647,10 +647,7 @@ $category_stmt->close();
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
-            <a href="statistics.php" class="nav-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>Statistics</span>
-            </a>
+            
         </div>
 
         <div class="configure-profiles">
@@ -666,7 +663,7 @@ $category_stmt->close();
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -685,10 +682,15 @@ $category_stmt->close();
     <div class="main-content">
         <h1>Notes</h1>
         <p>Store and organize your programming notes, algorithms, and code snippets.</p>
+<<<<<<< HEAD
         <a href="dashboard.php" class="back-to-dashboard-btn">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
         <div class="notes-container">
+=======
+
+        <div class="notes-container" style="padding: 20px 0;">
+>>>>>>> ffdde78614fdb118a1b920e75bc9a02e43e211eb
             <!-- Notes Sidebar -->
             <div class="notes-sidebar">
                 <div class="notes-header">

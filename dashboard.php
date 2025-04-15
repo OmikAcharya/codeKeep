@@ -139,7 +139,7 @@ usort($merged_future_contests, function ($a, $b) {
             </div>
             <div class="user-info">
                 <div class="user-name"><?php echo htmlspecialchars($name); ?></div>
-                <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
+                
             </div>
             <button class="logout-btn" onclick="confirmLogout()">
                 <i class="fas fa-sign-out-alt"></i>
