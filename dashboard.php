@@ -96,6 +96,7 @@ usort($merged_future_contests, function ($a, $b) {
 
 <body>
     <!-- Sidebar -->
+     
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
@@ -137,7 +138,14 @@ usort($merged_future_contests, function ($a, $b) {
             </button>
         </div>
     </div>
+    <div class="extra" style="width: 220px;
+    background-color: #171923;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2d3748;">
 
+     </div>
     <!-- Main Content -->
     <div class="main-content">
         <!-- Stats Cards -->
