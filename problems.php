@@ -24,42 +24,206 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     }
 }
 
-// Handle bookmark toggle action via AJAX
-if (isset($_POST['action']) && $_POST['action'] === 'toggle_bookmark') {
-    if (!isset($_POST['problem_id']) || !isset($_SESSION['email'])) {
-        echo json_encode(['success' => false, 'message' => 'Missing required data']);
+// Handle AJAX actions
+if (isset($_POST['action'])) {
+    if (!isset($_SESSION['email'])) {
+        echo json_encode(['success' => false, 'message' => 'User not logged in']);
         exit;
     }
 
-    $problem_id = $_POST['problem_id'];
     $user_email = $_SESSION['email'];
 
-    // Check if bookmark already exists
-    $check_stmt = $conn->prepare("SELECT id FROM bookmarks WHERE user_email = ? AND problem_id = ?");
-    $check_stmt->bind_param("si", $user_email, $problem_id);
-    $check_stmt->execute();
-    $check_stmt->store_result();
+    // Handle bookmark toggle action
+    if ($_POST['action'] === 'toggle_bookmark') {
+        if (!isset($_POST['problem_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Missing problem ID']);
+            exit;
+        }
 
-    if ($check_stmt->num_rows > 0) {
-        // Bookmark exists, so remove it
-        $delete_stmt = $conn->prepare("DELETE FROM bookmarks WHERE user_email = ? AND problem_id = ?");
-        $delete_stmt->bind_param("si", $user_email, $problem_id);
-        $result = $delete_stmt->execute();
-        $delete_stmt->close();
+        $problem_id = $_POST['problem_id'];
 
-        echo json_encode(['success' => $result, 'bookmarked' => false]);
-    } else {
-        // Bookmark doesn't exist, so add it
-        $insert_stmt = $conn->prepare("INSERT INTO bookmarks (user_email, problem_id) VALUES (?, ?)");
-        $insert_stmt->bind_param("si", $user_email, $problem_id);
-        $result = $insert_stmt->execute();
-        $insert_stmt->close();
+        // Check if bookmark already exists
+        $check_stmt = $conn->prepare("SELECT id FROM bookmarks WHERE user_email = ? AND problem_id = ?");
+        $check_stmt->bind_param("si", $user_email, $problem_id);
+        $check_stmt->execute();
+        $check_stmt->store_result();
 
-        echo json_encode(['success' => $result, 'bookmarked' => true]);
+        if ($check_stmt->num_rows > 0) {
+            // Bookmark exists, so remove it
+            $delete_stmt = $conn->prepare("DELETE FROM bookmarks WHERE user_email = ? AND problem_id = ?");
+            $delete_stmt->bind_param("si", $user_email, $problem_id);
+            $result = $delete_stmt->execute();
+            $delete_stmt->close();
+
+            echo json_encode(['success' => $result, 'bookmarked' => false]);
+        } else {
+            // Bookmark doesn't exist, so add it
+            $insert_stmt = $conn->prepare("INSERT INTO bookmarks (user_email, problem_id) VALUES (?, ?)");
+            $insert_stmt->bind_param("si", $user_email, $problem_id);
+            $result = $insert_stmt->execute();
+            $insert_stmt->close();
+
+            echo json_encode(['success' => $result, 'bookmarked' => true]);
+        }
+
+        $check_stmt->close();
+        exit;
     }
 
-    $check_stmt->close();
-    exit;
+    // Handle add new problem action
+    if ($_POST['action'] === 'add_problem') {
+        // Validate required fields
+        $required_fields = ['title', 'difficulty', 'platform', 'problem_url', 'description'];
+        $missing_fields = [];
+
+        foreach ($required_fields as $field) {
+            if (!isset($_POST[$field]) || empty($_POST[$field])) {
+                $missing_fields[] = $field;
+            }
+        }
+
+        if (!empty($missing_fields)) {
+            echo json_encode(['success' => false, 'message' => 'Missing required fields: ' . implode(', ', $missing_fields)]);
+            exit;
+        }
+
+        // Get form data
+        $title = $_POST['title'];
+        $difficulty = $_POST['difficulty'];
+        $platform = $_POST['platform'] === 'other' ? 'Custom' : $_POST['platform'];
+        $problem_url = $_POST['problem_url'];
+        $description = $_POST['description'];
+        $tags = isset($_POST['tags']) ? $_POST['tags'] : '';
+
+        // Insert the problem
+        $stmt = $conn->prepare("INSERT INTO problems (title, difficulty, platform, problem_url, description, tags) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $title, $difficulty, $platform, $problem_url, $description, $tags);
+
+        if ($stmt->execute()) {
+            $new_problem_id = $conn->insert_id;
+            echo json_encode([
+                'success' => true,
+                'message' => 'Problem added successfully',
+                'problem_id' => $new_problem_id
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to add problem: ' . $stmt->error]);
+        }
+
+        $stmt->close();
+        exit;
+    }
+
+    // Handle mark as solved action
+    if ($_POST['action'] === 'mark_solved') {
+        if (!isset($_POST['problem_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Missing problem ID']);
+            exit;
+        }
+
+        $problem_id = $_POST['problem_id'];
+        $solution_code = $_POST['solution_code'] ?? '';
+        $language = $_POST['language'] ?? '';
+        $time_taken = $_POST['time_taken'] ?? null;
+
+        // Check if problem is already marked as solved
+        $check_stmt = $conn->prepare("SELECT id FROM solved_problems WHERE user_email = ? AND problem_id = ?");
+        $check_stmt->bind_param("si", $user_email, $problem_id);
+        $check_stmt->execute();
+        $check_stmt->store_result();
+
+        if ($check_stmt->num_rows > 0) {
+            echo json_encode(['success' => false, 'message' => 'Problem already marked as solved']);
+            $check_stmt->close();
+            exit;
+        }
+        $check_stmt->close();
+
+        // Get problem details for statistics update
+        $problem_stmt = $conn->prepare("SELECT difficulty, platform FROM problems WHERE id = ?");
+        $problem_stmt->bind_param("i", $problem_id);
+        $problem_stmt->execute();
+        $problem_stmt->bind_result($difficulty, $platform);
+        $problem_stmt->fetch();
+        $problem_stmt->close();
+
+        // Start transaction
+        $conn->begin_transaction();
+
+        try {
+            // Insert into solved_problems
+            $insert_stmt = $conn->prepare("INSERT INTO solved_problems (user_email, problem_id, solution_code, language, time_taken) VALUES (?, ?, ?, ?, ?)");
+            $insert_stmt->bind_param("sissi", $user_email, $problem_id, $solution_code, $language, $time_taken);
+            $insert_stmt->execute();
+            $insert_stmt->close();
+
+            // Update user statistics
+            $today = date('Y-m-d');
+
+            // Check if user has statistics record
+            $stats_check = $conn->prepare("SELECT id, last_solved_date FROM user_statistics WHERE user_email = ?");
+            $stats_check->bind_param("s", $user_email);
+            $stats_check->execute();
+            $stats_check->store_result();
+
+            if ($stats_check->num_rows === 0) {
+                // Create new statistics record
+                $stats_insert = $conn->prepare("INSERT INTO user_statistics (user_email, total_solved, last_solved_date, streak_days) VALUES (?, 1, ?, 1)");
+                $stats_insert->bind_param("ss", $user_email, $today);
+                $stats_insert->execute();
+                $stats_insert->close();
+            } else {
+                // Update existing statistics
+                $stats_check->bind_result($stats_id, $last_solved_date);
+                $stats_check->fetch();
+
+                // Calculate streak
+                $streak_update = '';
+                if ($last_solved_date) {
+                    $yesterday = date('Y-m-d', strtotime('-1 day'));
+                    if ($last_solved_date == $today) {
+                        // Already solved today, no streak update needed
+                        $streak_update = '';
+                    } elseif ($last_solved_date == $yesterday) {
+                        // Solved yesterday, increment streak
+                        $streak_update = ', streak_days = streak_days + 1';
+                    } else {
+                        // Streak broken, reset to 1
+                        $streak_update = ', streak_days = 1';
+                    }
+                } else {
+                    // First time solving, set streak to 1
+                    $streak_update = ', streak_days = 1';
+                }
+
+                // Update statistics based on difficulty and platform
+                $difficulty_col = strtolower($difficulty) . '_solved';
+                $platform_col = strtolower($platform) . '_solved';
+
+                $stats_update = $conn->prepare("UPDATE user_statistics SET
+                    total_solved = total_solved + 1,
+                    $difficulty_col = $difficulty_col + 1,
+                    $platform_col = $platform_col + 1,
+                    last_solved_date = ? $streak_update
+                    WHERE user_email = ?");
+                $stats_update->bind_param("ss", $today, $user_email);
+                $stats_update->execute();
+                $stats_update->close();
+            }
+            $stats_check->close();
+
+            // Commit transaction
+            $conn->commit();
+
+            echo json_encode(['success' => true, 'message' => 'Problem marked as solved']);
+        } catch (Exception $e) {
+            // Rollback transaction on error
+            $conn->rollback();
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+
+        exit;
+    }
 }
 
 // Get filter parameters
@@ -69,13 +233,15 @@ $bookmarked_filter = isset($_GET['bookmarked']) ? ($_GET['bookmarked'] === '1') 
 
 // Build the SQL query based on filters
 $sql = "SELECT p.id, p.title, p.difficulty, p.platform, p.problem_url, p.description, p.tags,
-        CASE WHEN b.id IS NOT NULL THEN 1 ELSE 0 END AS bookmarked
+        CASE WHEN b.id IS NOT NULL THEN 1 ELSE 0 END AS bookmarked,
+        CASE WHEN sp.id IS NOT NULL THEN 1 ELSE 0 END AS solved
         FROM problems p
-        LEFT JOIN bookmarks b ON p.id = b.problem_id AND b.user_email = ?";
+        LEFT JOIN bookmarks b ON p.id = b.problem_id AND b.user_email = ?
+        LEFT JOIN solved_problems sp ON p.id = sp.problem_id AND sp.user_email = ?";
 
 $where_clauses = [];
-$params = [$email];
-$types = "s";
+$params = [$email, $email];
+$types = "ss";
 
 if ($platform_filter !== 'all') {
     $where_clauses[] = "p.platform = ?";
@@ -91,6 +257,12 @@ if ($difficulty_filter !== 'all') {
 
 if ($bookmarked_filter) {
     $where_clauses[] = "b.id IS NOT NULL";
+}
+
+// Add solved filter if specified
+$solved_filter = isset($_GET['solved']) ? ($_GET['solved'] === '1') : false;
+if ($solved_filter) {
+    $where_clauses[] = "sp.id IS NOT NULL";
 }
 
 if (!empty($where_clauses)) {
@@ -175,6 +347,41 @@ $filtered_problems = $problems;
             border-color: #2563eb;
         }
 
+        .header-with-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .add-problem-btn {
+            padding: 12px 24px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .add-problem-btn:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .add-problem-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         .problem-card {
             background-color: #1e2130;
             border-radius: 10px;
@@ -229,6 +436,23 @@ $filtered_problems = $problems;
 
         .platform-codeforces {
             background-color: #805ad5;
+        }
+
+        .platform-custom {
+            background-color: #9c4221;
+        }
+
+        .custom-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 6px;
+            background-color: #9c4221;
+            color: white;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 5px;
+            vertical-align: middle;
         }
 
         .problem-description {
@@ -314,6 +538,30 @@ $filtered_problems = $problems;
             border-color: #f59e0b;
         }
 
+        .solved-btn {
+            background-color: transparent;
+            border: 1px solid #2d3748;
+            color: #a0aec0;
+        }
+
+        .solved-btn.active {
+            background-color: #48bb78;
+            color: white;
+            border-color: #48bb78;
+        }
+
+        .solved-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            background-color: #48bb78;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
         .search-container {
             margin-bottom: 20px;
         }
@@ -376,6 +624,10 @@ $filtered_problems = $problems;
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
+            <a href="statistics.php" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistics</span>
+            </a>
         </div>
 
         <div class="user-profile">
@@ -394,8 +646,15 @@ $filtered_problems = $problems;
 
     <!-- Main Content -->
     <div class="main-content">
-        <h1>Coding Problems</h1>
-        <p>Browse, solve, and bookmark coding problems from various platforms.</p>
+        <div class="header-with-button">
+            <div>
+                <h1>Coding Problems</h1>
+                <p>Browse, solve, and bookmark coding problems from various platforms.</p>
+            </div>
+            <button class="add-problem-btn" onclick="showAddProblemForm()">
+                <i class="fas fa-plus"></i> Add New Problem
+            </button>
+        </div>
 
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search problems..." id="problemSearch">
@@ -409,6 +668,7 @@ $filtered_problems = $problems;
                     <a href="?platform=leetcode<?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?><?php echo $bookmarked_filter ? '&bookmarked=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'leetcode' ? 'active' : ''; ?>">LeetCode</a>
                     <a href="?platform=codechef<?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?><?php echo $bookmarked_filter ? '&bookmarked=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codechef' ? 'active' : ''; ?>">CodeChef</a>
                     <a href="?platform=codeforces<?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?><?php echo $bookmarked_filter ? '&bookmarked=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'codeforces' ? 'active' : ''; ?>">Codeforces</a>
+                    <a href="?platform=custom<?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?><?php echo $bookmarked_filter ? '&bookmarked=1' : ''; ?>" class="filter-btn <?php echo $platform_filter === 'custom' ? 'active' : ''; ?>">Custom</a>
                 </div>
             </div>
 
@@ -429,6 +689,14 @@ $filtered_problems = $problems;
                     <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter : ''; ?><?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?>" class="filter-btn <?php echo !$bookmarked_filter ? 'active' : ''; ?>">All Problems</a>
                 </div>
             </div>
+
+            <div class="filter-group">
+                <div class="filter-label">Solved Status</div>
+                <div class="filter-options">
+                    <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter . '&' : ''; ?><?php echo $difficulty_filter !== 'all' ? 'difficulty=' . $difficulty_filter . '&' : ''; ?>solved=1" class="filter-btn <?php echo $solved_filter ? 'active' : ''; ?>">Solved Only</a>
+                    <a href="?<?php echo $platform_filter !== 'all' ? 'platform=' . $platform_filter : ''; ?><?php echo $difficulty_filter !== 'all' ? '&difficulty=' . $difficulty_filter : ''; ?>" class="filter-btn <?php echo !$solved_filter ? 'active' : ''; ?>">All Problems</a>
+                </div>
+            </div>
         </div>
 
         <div class="problems-container">
@@ -440,7 +708,12 @@ $filtered_problems = $problems;
                 <?php foreach ($filtered_problems as $problem): ?>
                     <div class="problem-card <?php echo strtolower($problem['difficulty']); ?>">
                         <div class="problem-header">
-                            <div class="problem-title"><?php echo htmlspecialchars($problem['title']); ?></div>
+                            <div class="problem-title">
+                                <?php echo htmlspecialchars($problem['title']); ?>
+                                <?php if (strtolower($problem['platform']) === 'custom'): ?>
+                                    <span class="custom-badge"><i class="fas fa-user-edit"></i> User Added</span>
+                                <?php endif; ?>
+                            </div>
                             <div class="problem-platform platform-<?php echo strtolower($problem['platform']); ?>">
                                 <?php echo htmlspecialchars($problem['platform']); ?>
                             </div>
@@ -459,6 +732,9 @@ $filtered_problems = $problems;
                         <div class="problem-actions">
                             <div class="difficulty difficulty-<?php echo strtolower($problem['difficulty']); ?>">
                                 <?php echo htmlspecialchars($problem['difficulty']); ?>
+                                <?php if ($problem['solved']): ?>
+                                    <span class="solved-badge"><i class="fas fa-check-circle"></i> Solved</span>
+                                <?php endif; ?>
                             </div>
 
                             <div class="action-buttons">
@@ -466,6 +742,13 @@ $filtered_problems = $problems;
                                     <i class="fas <?php echo $problem['bookmarked'] ? 'fa-bookmark' : 'fa-bookmark'; ?>"></i>
                                     <?php echo $problem['bookmarked'] ? 'Bookmarked' : 'Bookmark'; ?>
                                 </button>
+
+                                <?php if (!$problem['solved']): ?>
+                                    <button class="problem-btn solved-btn" onclick="markAsSolved(<?php echo $problem['id']; ?>)">
+                                        <i class="fas fa-check-circle"></i>
+                                        Mark as Solved
+                                    </button>
+                                <?php endif; ?>
 
                                 <a href="<?php echo htmlspecialchars($problem['url']); ?>" target="_blank" class="problem-btn">
                                     <i class="fas fa-external-link-alt"></i>
@@ -518,6 +801,359 @@ $filtered_problems = $problems;
             })
             .catch(error => {
                 console.error('Error:', error);
+            });
+        }
+
+        function markAsSolved(problemId) {
+            // Show solution form in a modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Mark Problem as Solved</h3>
+                        <button class="close-btn" onclick="closeModal(this.parentNode.parentNode.parentNode)">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="solutionForm">
+                            <div class="form-group">
+                                <label for="language">Programming Language</label>
+                                <select id="language" name="language" class="form-control">
+                                    <option value="C++">C++</option>
+                                    <option value="Java">Java</option>
+                                    <option value="Python">Python</option>
+                                    <option value="JavaScript">JavaScript</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="timeTaken">Time Taken (minutes)</label>
+                                <input type="number" id="timeTaken" name="timeTaken" class="form-control" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="solutionCode">Solution Code (optional)</label>
+                                <textarea id="solutionCode" name="solutionCode" class="form-control" rows="10"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn" onclick="closeModal(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
+                                <button type="button" class="submit-btn" onclick="submitSolution(${problemId})">Mark as Solved</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Add modal styles if not already added
+            if (!document.getElementById('modalStyles')) {
+                const style = document.createElement('style');
+                style.id = 'modalStyles';
+                style.textContent = `
+                    .modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.8);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                        backdrop-filter: blur(5px);
+                        animation: fadeIn 0.3s ease-out;
+                    }
+
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+
+                    @keyframes slideIn {
+                        from { transform: translateY(-20px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+
+                    .modal-content {
+                        background-color: #1e2130;
+                        border-radius: 12px;
+                        width: 90%;
+                        max-width: 650px;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+                        animation: slideIn 0.3s ease-out;
+                        border: 1px solid #3f4865;
+                    }
+
+                    .modal-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 20px 25px;
+                        border-bottom: 1px solid #3f4865;
+                        background-color: #171923;
+                    }
+
+                    .modal-header h3 {
+                        margin: 0;
+                        font-size: 20px;
+                        color: #e2e8f0;
+                        font-weight: 600;
+                    }
+
+                    .close-btn {
+                        background: none;
+                        border: none;
+                        font-size: 28px;
+                        color: #a0aec0;
+                        cursor: pointer;
+                        transition: color 0.2s;
+                        line-height: 1;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    .close-btn:hover {
+                        color: #e2e8f0;
+                    }
+
+                    .modal-body {
+                        padding: 25px;
+                    }
+
+                    .form-group {
+                        margin-bottom: 24px;
+                    }
+
+                    .form-group label {
+                        display: block;
+                        margin-bottom: 10px;
+                        color: #e2e8f0;
+                        font-weight: 500;
+                        font-size: 15px;
+                    }
+
+                    .form-control {
+                        width: 100%;
+                        padding: 12px 15px;
+                        background-color: #171923;
+                        border: 1px solid #3f4865;
+                        border-radius: 8px;
+                        color: white;
+                        font-size: 15px;
+                        transition: border-color 0.3s, box-shadow 0.3s;
+                    }
+
+                    .form-control:focus {
+                        border-color: #4299e1;
+                        outline: none;
+                        box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.3);
+                    }
+
+                    textarea.form-control {
+                        resize: vertical;
+                        min-height: 120px;
+                        line-height: 1.5;
+                        font-family: inherit;
+                    }
+
+                    .form-actions {
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 15px;
+                        margin-top: 30px;
+                    }
+
+                    .cancel-btn, .submit-btn {
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 15px;
+                        font-weight: 600;
+                        transition: all 0.3s;
+                    }
+
+                    .cancel-btn {
+                        background-color: transparent;
+                        border: 1px solid #3f4865;
+                        color: #e2e8f0;
+                    }
+
+                    .cancel-btn:hover {
+                        background-color: #2d3748;
+                    }
+
+                    .submit-btn {
+                        background-color: #4299e1;
+                        color: white;
+                        border: none;
+                        box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
+                    }
+
+                    .submit-btn:hover {
+                        background-color: #3182ce;
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 8px rgba(66, 153, 225, 0.3);
+                    }
+
+                    .submit-btn:active {
+                        transform: translateY(0);
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        function closeModal(modal) {
+            document.body.removeChild(modal);
+        }
+
+        function showAddProblemForm() {
+            // Show problem form in a modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-plus-circle"></i> Add New Problem</h3>
+                        <button class="close-btn" onclick="closeModal(this.parentNode.parentNode.parentNode)">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="problemForm">
+                            <div class="form-group">
+                                <label for="title"><i class="fas fa-heading"></i> Problem Title*</label>
+                                <input type="text" id="title" name="title" class="form-control" placeholder="Enter problem title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="platform"><i class="fas fa-globe"></i> Platform*</label>
+                                <select id="platform" name="platform" class="form-control" required>
+                                    <option value="LeetCode">LeetCode</option>
+                                    <option value="CodeChef">CodeChef</option>
+                                    <option value="Codeforces">Codeforces</option>
+                                    <option value="other">Other (Custom)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="difficulty"><i class="fas fa-chart-line"></i> Difficulty*</label>
+                                <select id="difficulty" name="difficulty" class="form-control" required>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="problem_url"><i class="fas fa-link"></i> Problem URL*</label>
+                                <input type="url" id="problem_url" name="problem_url" class="form-control" placeholder="https://..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description"><i class="fas fa-align-left"></i> Problem Description*</label>
+                                <textarea id="description" name="description" class="form-control" rows="5" placeholder="Describe the problem..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="tags"><i class="fas fa-tags"></i> Tags (comma separated)</label>
+                                <input type="text" id="tags" name="tags" class="form-control" placeholder="e.g., Array, Dynamic Programming, Math">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn" onclick="closeModal(this.parentNode.parentNode.parentNode.parentNode.parentNode)">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button type="button" class="submit-btn" onclick="submitProblem()">
+                                    <i class="fas fa-save"></i> Add Problem
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function submitProblem() {
+            // Get form data
+            const title = document.getElementById('title').value;
+            const platform = document.getElementById('platform').value;
+            const difficulty = document.getElementById('difficulty').value;
+            const problem_url = document.getElementById('problem_url').value;
+            const description = document.getElementById('description').value;
+            const tags = document.getElementById('tags').value;
+
+            // Validate required fields
+            if (!title || !platform || !difficulty || !problem_url || !description) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('action', 'add_problem');
+            formData.append('title', title);
+            formData.append('platform', platform);
+            formData.append('difficulty', difficulty);
+            formData.append('problem_url', problem_url);
+            formData.append('description', description);
+            formData.append('tags', tags);
+
+            fetch('problems.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    const modal = document.querySelector('.modal');
+                    document.body.removeChild(modal);
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the problem.');
+            });
+        }
+
+        function submitSolution(problemId) {
+            const language = document.getElementById('language').value;
+            const timeTaken = document.getElementById('timeTaken').value;
+            const solutionCode = document.getElementById('solutionCode').value;
+
+            if (!language || !timeTaken) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('action', 'mark_solved');
+            formData.append('problem_id', problemId);
+            formData.append('language', language);
+            formData.append('time_taken', timeTaken);
+            formData.append('solution_code', solutionCode);
+
+            // Send AJAX request
+            fetch('problems.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Close the modal
+                    const modal = document.querySelector('.modal');
+                    document.body.removeChild(modal);
+                    // Reload the page to update the UI
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while marking the problem as solved.');
             });
         }
 
