@@ -378,6 +378,13 @@ $filtered_problems = $problems;
             </a>
         </div>
 
+        <div class="configure-profiles">
+            <a href="profile.php" class="configure-btn">
+                <i class="fas fa-user-cog"></i>
+                <span>Configure Profiles</span>
+            </a>
+        </div>
+
         <div class="user-profile">
             <div class="user-avatar">
                 <?php echo substr($name, 0, 1); ?>
