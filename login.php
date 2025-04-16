@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="form-container">
         <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center;">
-            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
+            <h1>&lt;Code<span style="color: #1a4eaf">Case&gt;</span></h1>
             <h1><span style="text-align: left;">Login</span></h1>
         </div>
         <form method="POST">
@@ -59,4 +59,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 </html>
 
-<!-- <h1>Code<span style = "color: #1a4eaf">Keep</span></h1> -->
+<!-- <h1>Code<span style = "color: #1a4eaf">Case</span></h1> -->
