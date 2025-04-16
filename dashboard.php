@@ -219,14 +219,9 @@ usort($merged_future_contests, function ($a, $b) {
 
     <div class="sidebar">
         <div class="logo">
-            <?php if (is_array($leetcode_data) && !empty($leetcode_data['avatar_url'])): ?>
-                <img src="<?php echo htmlspecialchars($leetcode_data['avatar_url']); ?>" alt="Profile Picture">
-            <?php elseif (is_array($codeforces_data) && !empty($codeforces_data['avatar']) && $codeforces_data['avatar'] !== 'https://userpic.codeforces.org/no-avatar.jpg'): ?>
-                <img src="<?php echo htmlspecialchars($codeforces_data['avatar']); ?>" alt="Profile Picture">
-            <?php else: ?>
-                <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <?php endif; ?>
-            <span class="logo-text">CodeCase</span>
+            <?php // Use a consistent placeholder or fetch logic if available ?>
+            <img src="https://picsum.photos/200/200" alt="Profile Picture">
+            <span class="logo-text">CodeKeep</span>
         </div>
 
         <div class="nav-menu">
@@ -234,7 +229,7 @@ usort($merged_future_contests, function ($a, $b) {
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="./allusers.php" class="nav-item">
+            <a href="allusers.php" class="nav-item">
                 <i class="fas fa-users"></i>
                 <span>All Users</span>
             </a>
@@ -249,6 +244,10 @@ usort($merged_future_contests, function ($a, $b) {
             <a href="notes.php" class="nav-item">
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
+            </a>
+            <a href="cp_helper.php" class="nav-item">
+                <i class="fas fa-robot"></i>
+                <span>CP Helper</span>
             </a>
         </div>
 

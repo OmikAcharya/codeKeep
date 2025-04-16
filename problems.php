@@ -314,7 +314,7 @@ $filtered_problems = $problems;
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeCase</span>
+            <span class="logo-text">CodeKeep</span>
         </div>
 
         <div class="nav-menu">
@@ -322,7 +322,7 @@ $filtered_problems = $problems;
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="./allusers.php" class="nav-item">
+            <a href="allusers.php" class="nav-item">
                 <i class="fas fa-users"></i>
                 <span>All Users</span>
             </a>
@@ -338,7 +338,10 @@ $filtered_problems = $problems;
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
             </a>
-            
+            <a href="cp_helper.php" class="nav-item">
+                <i class="fas fa-robot"></i>
+                <span>CP Helper</span>
+            </a>
         </div>
 
         <div class="configure-profiles">

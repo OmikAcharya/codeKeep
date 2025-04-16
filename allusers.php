@@ -158,7 +158,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeTracker</span>
+            <span class="logo-text">CodeKeep</span>
         </div>
 
         <div class="nav-menu">
@@ -166,7 +166,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="./allusers.php" class="nav-item active">
+            <a href="allusers.php" class="nav-item active">
                 <i class="fas fa-users"></i>
                 <span>All Users</span>
             </a>
@@ -181,6 +181,10 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
             <a href="notes.php" class="nav-item">
                 <i class="fas fa-sticky-note"></i>
                 <span>Notes</span>
+            </a>
+            <a href="cp_helper.php" class="nav-item">
+                <i class="fas fa-robot"></i>
+                <span>CP Helper</span>
             </a>
         </div>
 
@@ -309,7 +313,7 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
         function escapeHtml(unsafe) {
             return unsafe
                 .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
+                .replace(/<//g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
