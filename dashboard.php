@@ -340,11 +340,11 @@ usort($merged_future_contests, function ($a, $b) {
                 <!-- Performance Card -->
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <div class="card-title">Performance</div>
+                        <div class="card-title">HeatMap CodeChef</div>
                     </div>
 
                     <div class="chart-container">
-                        <p>Performance data will be displayed here</p>
+                        <iframe src="https://codechef-api.vercel.app/heatmap/omitron" style="width: 100%; height: 100%"></iframe>
                     </div>
                 </div>
 

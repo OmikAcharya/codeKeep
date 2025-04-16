@@ -309,12 +309,12 @@ body {
 
 /* Chart Styles */
 .chart-container {
-    height: 200px;
+    height: max-content;
     position: relative;
-    display: flex;
+    /* display: flex;
     align-items: center;
     justify-content: center;
-    color: #a0aec0;
+    color: #a0aec0; */
     font-size: 16px;
 }
 
