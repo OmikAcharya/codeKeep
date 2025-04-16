@@ -79,7 +79,7 @@ $leetcode_value = $existingProfile ? $existingProfile['leetcode_id'] : '';
 <body>
     <div class="form-container">
         <div style="display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; width: 100%;">
-            <h1>&lt;Code<span style="color: #1a4eaf">Keep&gt;</span></h1>
+            <h1>&lt;Code<span style="color: #1a4eaf">Case&gt;</span></h1>
             <h1><span style="text-align: left;">Connect Profiles</span></h1>
         </div>
         <form action="profile.php" method="POST" style="width: 100%;">
