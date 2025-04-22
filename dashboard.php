@@ -341,12 +341,16 @@ usort($merged_future_contests, function ($a, $b) {
             <div class="left-column">
                 <!-- Performance Card -->
                 <div class="dashboard-card">
-                    <div class="card-header">
-                        <div class="card-title">HeatMap CodeChef</div>
+                    <div class="card-header" style="margin-bottom: 5px;">
+                        <div class="card-title" >HeatMap CodeChef</div>
                     </div>
 
-                    <div class="chart-container">
-                        <iframe src="https://codechef-api.vercel.app/heatmap/omitron" style="width: 100%; height: 100%"></iframe>
+                    <div class="chart-container" style="height: 190px; /* Increased height */ border: none; padding: 0; margin: 0;">
+                        <iframe 
+                            src="https://codechef-api.vercel.app/heatmap/omik" 
+                            style="width: 100%; height: 100%; border: none; display: block;" 
+                            scrolling="no"> 
+                        </iframe>
                     </div>
                 </div>
 
@@ -355,48 +359,6 @@ usort($merged_future_contests, function ($a, $b) {
                     <div class="card-header" style="margin-bottom: 0px;">
                         <div class="card-title">Total Solved Problems</div>
                     </div>
-                    <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load("current", {packages:["corechart"]});
-  google.charts.setOnLoadCallback(drawChart);
-  function drawChart() {
-    var data = google.visualization.arrayToDataTable([
-      ['Task', 'Hours per Day'],
-      ['Work',     11],
-      ['Eat',      2],
-      ['Commute',  2],
-      ['Watch TV', 2],
-      ['Sleep',    7]
-    ]);
-
-    var options = {
-      pieHole: 0.4,
-      backgroundColor: 'transparent',
-      titleTextStyle: {
-        color: 'white',
-      },
-      chartArea: {
-        backgroundColor: 'transparent'
-      },
-      legend: {
-        position: 'bottom',
-        alignment: 'center',
-        textStyle: {
-          color: 'white'
-        }
-      },
-      chartArea: {
-  backgroundColor: 'transparent',
-  width: '80%',
-  height: '80%'
-},
-      pieSliceBorderColor: 'transparent'  // 👈 removes the white borders
-    };
-    
-    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-    chart.draw(data, options);
-  }
-</script> -->
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
