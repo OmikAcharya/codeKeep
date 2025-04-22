@@ -223,8 +223,7 @@ usort($merged_future_contests, function ($a, $b) {
     <div class="sidebar">
         <div class="logo">
             <?php // Use a consistent placeholder or fetch logic if available ?>
-            <img src="https://picsum.photos/200/200" alt="Profile Picture">
-            <span class="logo-text">CodeKeep</span>
+            <h1><span class="logo-text">&lt;Code<span style="color: #1a4eaf">Case&gt;</span></span></h1>
         </div>
 
         <div class="nav-menu">
