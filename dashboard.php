@@ -1,4 +1,5 @@
 <?php
+require_once 'api/functions.php'; // assuming you separate the functions
 require 'config.php';
 
 if (!isset($_SESSION['name']) && !isset($_COOKIE['name'])) {
@@ -23,7 +24,9 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
         die("Query preparation failed: " . $conn->error);
     }
 }
-
+$leetcode_solved = getLeetCodeStats($leetcode_id);
+$codechef_solved = getCodeChefStats($codechef_id);
+$codeforces_solved = getCodeForcesStats($codeforces_id);
 // Fetch ratings (you would need to implement these functions)
 function getLeetcodeRating($username)
 {
@@ -349,27 +352,126 @@ usort($merged_future_contests, function ($a, $b) {
 
                 <!-- Total Count Card -->
                 <div class="dashboard-card" style="height:50vh">
-                    <div class="card-header">
+                    <div class="card-header" style="margin-bottom: 0px;">
                         <div class="card-title">Total Solved Problems</div>
                     </div>
+                    <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Task', 'Hours per Day'],
+      ['Work',     11],
+      ['Eat',      2],
+      ['Commute',  2],
+      ['Watch TV', 2],
+      ['Sleep',    7]
+    ]);
 
-                    <div class="donut-chart">
-                        <div class="donut-ring"></div>
-                        <div class="donut-hole">
-                            <div class="donut-label">Total</div>
-                            <div class="donut-value">
-                                <?php
-                                // Use actual LeetCode data if available
-                                $totalCount = 0;
-                                if (is_array($leetcode_data)) {
-                                    $totalCount += $leetcode_data['total_solved'];
-                                }
-                                // Add other platforms' counts here when implemented
+    var options = {
+      pieHole: 0.4,
+      backgroundColor: 'transparent',
+      titleTextStyle: {
+        color: 'white',
+      },
+      chartArea: {
+        backgroundColor: 'transparent'
+      },
+      legend: {
+        position: 'bottom',
+        alignment: 'center',
+        textStyle: {
+          color: 'white'
+        }
+      },
+      chartArea: {
+  backgroundColor: 'transparent',
+  width: '80%',
+  height: '80%'
+},
+      pieSliceBorderColor: 'transparent'  // 👈 removes the white borders
+    };
+    
+    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+    chart.draw(data, options);
+  }
+</script> -->
 
-                                echo $totalCount > 0 ? $totalCount : 'N/A';
-                                ?>
-                            </div>
-                        </div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    // Using the PHP variables injected into the JavaScript for the data
+    var leetcodeCount = <?php echo $leetcode_solved; ?>;
+    var codechefCount = <?php echo $codechef_solved; ?>;
+    var codeforcesCount = <?php echo $codeforces_solved; ?>;
+
+    // Calculate total problems solved
+    var totalSolved = leetcodeCount + codechefCount + codeforcesCount;
+
+    // Data for the donut chart
+    var data = google.visualization.arrayToDataTable([
+      ['Platform', 'Problems Solved'],
+      ['LeetCode', leetcodeCount],
+      ['CodeChef', codechefCount],
+      ['CodeForces', codeforcesCount]
+    ]);
+
+    // Options for the donut chart
+    var options = {
+      pieHole: 0.4,
+      backgroundColor: 'transparent',
+      titleTextStyle: {
+        color: 'white',
+      },
+      chartArea: {
+        backgroundColor: 'transparent'
+      },
+      legend: {
+        position: 'bottom',
+        alignment: 'center',
+        textStyle: {
+          color: 'white'
+        }
+      },
+      pieSliceText: 'value',  // Display numeric value instead of percentage
+      pieSliceBorderColor: 'transparent',  // 👈 removes the white borders
+      chartArea: {
+        backgroundColor: 'transparent',
+        width: '80%',
+        height: '80%'
+      },
+      colors: ['#ffc01e', '#00b8a3', '#ff375f']  // Contrasting colors for each pie slice
+    };
+
+    // Draw the donut chart in the element with the id "donutchart"
+    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+    chart.draw(data, options);
+
+    // Display the total solved number in the middle of the donut chart
+    var chartContainer = document.getElementById('donutchart');
+    var totalText = document.createElement('div');
+    totalText.style.position = 'absolute';
+    totalText.style.top = '50%';
+    totalText.style.left = '50%';
+    totalText.style.transform = 'translate(-50%, -50%)';
+    totalText.style.color = 'white';
+    totalText.style.fontSize = '24px';
+    totalText.innerHTML = totalSolved;
+    chartContainer.appendChild(totalText);
+  }
+</script>
+
+<!-- <div id="donutchart" style="width: 900px; height: 500px; position: relative;"></div> -->
+
+
+
+
+                    <div class="chart-container" style="height: 100%; width: 100%; position: relative; padding-bottom: 5px; margin-top: -5px;">
+                        <div id = "donutchart" style="padding: 0; margin: 0; width: 100%; height: 100%; margin-top: -10px;"></div>
                     </div>
                 </div>
             </div>
